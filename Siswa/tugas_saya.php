@@ -45,7 +45,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
                 <li class="<?= $current_page == 'tugas_saya.php' ? 'active' : '' ?>">
                     <a href="tugas_saya.php">
                         <i class="fa-regular fa-clipboard"></i>
-                        Tugas Saya
+                        Tugas Aing
                     </a>
                 </li>
 
