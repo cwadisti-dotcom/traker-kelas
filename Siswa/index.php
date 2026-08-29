@@ -162,7 +162,7 @@ $terlambat = mysqli_num_rows(
 
                 <h2><?= $totalTugas; ?></h2>
                 <h3>Total Tugas</h3>
-                <p>Jumlah semua tugas simple dari guru</p>
+                <p>Jumlah semua tugas simple abiz dari guru</p>
 
             </div>
 
