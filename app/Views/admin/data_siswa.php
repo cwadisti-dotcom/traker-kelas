@@ -43,7 +43,7 @@ include '../config/koneksi.php';
 
                     <a href="tambah_siswa.php" class="btn-add">
                         <i class="fas fa-plus"></i>
-                        Tambah Siswa
+                        Menambahkan Siswa
                     </a>
 
                 </div>
