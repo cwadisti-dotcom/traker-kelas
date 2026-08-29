@@ -150,7 +150,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
                         <?php if($row['status'] == 'Sudah Dinilai'): ?>
 
                             <span class="badge badge-success">
-                                Sudah Dinilai
+                                Sudah Dinilai  guru
                             </span>
 
                         <?php else: ?>
