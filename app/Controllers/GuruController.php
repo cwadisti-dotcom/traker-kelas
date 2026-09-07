@@ -137,4 +137,36 @@ class GuruController
         header("Location: edit_tugas.php");
         exit;
     }
+
+    public function editTugas()
+    {
+        return [
+            'tugas' => $this->tugasModel->getAll()
+        ];
+    }
+
+    public function nilai()
+    {
+        return [
+            'sudahDinilai' => $this->pengumpulanModel->getTotalDinilai(),
+            'belumDinilai' => $this->pengumpulanModel->getTotalBelumDinilai(),
+            'jawabanMasuk' => $this->pengumpulanModel->getTotal(),
+            'totalSiswa'   => $this->userModel->getTotalSiswa(),
+            'pengumpulan'  => $this->pengumpulanModel->getAllWithTugas()
+        ];
+    }
+
+    public function simpanNilai()
+    {
+        if(isset($_POST['simpan_nilai']))
+        {
+            $this->pengumpulanModel->updateNilai(
+                $_POST['id'],
+                $_POST['nilai']
+            );
+
+            header("Location: nilai.php");
+            exit;
+        }
+    }
 }

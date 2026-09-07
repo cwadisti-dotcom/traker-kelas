@@ -21,22 +21,6 @@
 
         <div class="content-box">
 
-            <div class="topbar">
-
-               
-
-                <div class="profile-box">
-
-                    <div class="profile-icon">
-                        <i class="fa-solid fa-user"></i>
-                    </div>
-
-                    Guru
-
-                </div>
-
-            </div>
-
             <h1 class="page-title">
                 Edit Tugas
             </h1>
@@ -63,18 +47,9 @@
 
                     </thead>
 
-                   <?php
-                include '../config/koneksi.php';
+                   <tbody>
 
-                $query = mysqli_query($koneksi,"
-                    SELECT * FROM tugas
-                    ORDER BY deadline ASC
-                ");
-                ?>
-
-                <tbody>
-
-                <?php while($row = mysqli_fetch_assoc($query)) : ?>
+                <?php while($row = mysqli_fetch_assoc($tugas)) : ?>
 
                 <tr>
 

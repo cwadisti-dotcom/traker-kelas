@@ -3,63 +3,91 @@ $current_page = basename($_SERVER['PHP_SELF']);
 ?>
 
 <aside class="sidebar">
-
     <div class="sidebar-top">
-
         <div class="logo">
-            <h2>DeadlineHub</h2>
+            <span class="logo-mark">DH</span>
+            <span class="logo-name">DeadlineHub</span>
         </div>
-
-        <div class="menu-title">GURU</div>
-
-        <ul class="menu">
-
-            <li class="<?= $current_page == 'index.php' ? 'active' : '' ?>">
-                <a href="index.php">
-                    <i class="fas fa-home"></i>
-                    Dashboard
-                </a>
-            </li>
-
-            <li class="<?= $current_page == 'tambah_tugas.php' ? 'active' : '' ?>">
-                <a href="tambah_tugas.php">
-                    <i class="fas fa-plus"></i>
-                    Tambah Tugas
-                </a>
-            </li>
-
-            <li class="<?= $current_page == 'edit_tugas.php' ? 'active' : '' ?>">
-                <a href="edit_tugas.php">
-                    <i class="fas fa-pen"></i>
-                    Edit Tugas
-                </a>
-            </li>
-
-            <li class="<?= $current_page == 'monitoring.php' ? 'active' : '' ?>">
-                <a href="monitoring.php">
-                    <i class="fas fa-chart-line"></i>
-                    Monitoring
-                </a>
-            </li>
-
-            <li class="<?= $current_page == 'nilai.php' ? 'active' : '' ?>">
-                <a href="nilai.php">
-                    <i class="fas fa-star"></i>
-                    Input Nilai
-                </a>
-            </li>
-
-        </ul>
-
+        <div class="nav-label">MENU</div>
+        <nav class="nav">
+            <a href="index.php"
+               class="nav-item <?= $current_page == 'index.php' ? 'is-active' : '' ?>">
+                <i class="fas fa-table-columns"></i>
+                Dashboard
+            </a>
+            <a href="tambah_tugas.php"
+               class="nav-item <?= $current_page == 'tambah_tugas.php' ? 'is-active' : '' ?>">
+                <i class="fas fa-plus-circle"></i>
+                Tambah Tugas
+            </a>
+            <a href="edit_tugas.php"
+               class="nav-item <?= in_array($current_page, ['edit_tugas.php', 'form_edit_tugas.php']) ? 'is-active' : '' ?>">
+                <i class="fas fa-pen-to-square"></i>
+                Edit Tugas
+            </a>
+            <a href="monitoring.php"
+               class="nav-item <?= $current_page == 'monitoring.php' ? 'is-active' : '' ?>">
+                <i class="fas fa-chart-line"></i>
+                Monitoring
+            </a>
+            <a href="nilai.php"
+               class="nav-item <?= $current_page == 'nilai.php' ? 'is-active' : '' ?>">
+                <i class="fas fa-star"></i>
+                Input Nilai
+            </a>
+        </nav>
     </div>
 
-    <ul class="menu">
-    <li class="logout">
-    <a href="../logout.php">
-    <i class="fas fa-sign-out-alt"></i>
-    Logout
-</a>
-</li>
-</ul>
+    <div class="sidebar-bottom">
+        <div class="profile-wrapper">
 
+            <button type="button" class="sidebar-profile" id="profileTrigger">
+                <div class="profile-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <span class="profile-name">Guru</span>
+                <i class="fas fa-chevron-up profile-caret"></i>
+            </button>
+
+            <div class="profile-dropdown" id="profileDropdown">
+                <div class="profile-dropdown-header">
+                    <div class="profile-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="profile-dropdown-info">
+                        <span class="profile-dropdown-name">Guru</span>
+                        <span class="profile-dropdown-role">Akun Pengajar</span>
+                    </div>
+                </div>
+
+                <div class="sep"></div>
+
+                <a href="../auth/logout.php" class="dropdown-item is-danger">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Keluar
+                </a>
+            </div>
+
+        </div>
+    </div>
 </aside>
+
+<script>
+(function () {
+    const trigger  = document.getElementById('profileTrigger');
+    const dropdown = document.getElementById('profileDropdown');
+
+    trigger.addEventListener('click', function (e) {
+        e.stopPropagation();
+        trigger.classList.toggle('is-open');
+        dropdown.classList.toggle('is-open');
+    });
+
+    document.addEventListener('click', function (e) {
+        if (!dropdown.contains(e.target) && !trigger.contains(e.target)) {
+            trigger.classList.remove('is-open');
+            dropdown.classList.remove('is-open');
+        }
+    });
+})();
+</script>

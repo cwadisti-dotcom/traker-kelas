@@ -21,20 +21,6 @@
 
         <div class="content-box">
 
-            <div class="topbar">
-
-                <div class="profile-box">
-
-                    <div class="profile-icon">
-                        <i class="fa-solid fa-user"></i>
-                    </div>
-
-                    Guru
-
-                </div>
-
-            </div>
-
             <h1 class="page-title">
                 Monitoring
             </h1>

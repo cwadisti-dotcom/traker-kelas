@@ -21,21 +21,6 @@
 
         <div class="content-box">
 
-            <div class="topbar">
-
-
-                <div class="profile-box">
-
-                    <div class="profile-icon">
-                        <i class="fa-solid fa-user"></i>
-                    </div>
-
-                    Guru
-
-                </div>
-
-            </div>
-
             <h1 class="page-title">
                 Dashboard Guru
             </h1>
@@ -48,7 +33,7 @@
 
                 <div class="stat-card">
 
-                    <div class="stat-icon bg-purple">
+                    <div class="stat-icon bg-yellow">
                         <i class="fa-solid fa-book"></i>
                     </div>
 
@@ -64,7 +49,7 @@
 
                 <div class="stat-card">
 
-                    <div class="stat-icon bg-green">
+                    <div class="stat-icon bg-yellow">
                         <i class="fa-solid fa-check"></i>
                     </div>
 
@@ -96,7 +81,7 @@
 
                 <div class="stat-card">
 
-                    <div class="stat-icon bg-blue">
+                    <div class="stat-icon bg-yellow">
                         <i class="fa-solid fa-star"></i>
                     </div>
 
@@ -131,9 +116,7 @@
 
                    <tbody>
 
-                    <tbody>
-
-                    <?php while($row = mysqli_fetch_assoc($tugas)): ?>
+                   <?php while($row = mysqli_fetch_assoc($tugas)): ?>
 
                     <tr>
 
