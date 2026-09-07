@@ -1,56 +1,3 @@
-<?php
-include '../config/koneksi.php';
-
-if(isset($_POST['simpan_nilai'])){
-
-    $id = $_POST['id'];
-    $nilai = $_POST['nilai'];
-
-    mysqli_query(
-        $koneksi,
-        "UPDATE pengumpulan_tugas
-        SET nilai='$nilai',
-        status='Sudah Dinilai'
-        WHERE id='$id'"
-    );
-
-    header("Location:nilai.php");
-    exit;
-}
-
-$sudahDinilai = mysqli_num_rows(
-    mysqli_query(
-        $koneksi,
-        "SELECT * FROM pengumpulan_tugas
-        WHERE nilai > 0"
-    )
-);
-
-$belumDinilai = mysqli_num_rows(
-    mysqli_query(
-        $koneksi,
-        "SELECT * FROM pengumpulan_tugas
-        WHERE nilai = 0
-        OR nilai IS NULL"
-    )
-);
-
-$jawabanMasuk = mysqli_num_rows(
-    mysqli_query(
-        $koneksi,
-        "SELECT * FROM pengumpulan_tugas"
-    )
-);
-
-$totalSiswa = mysqli_num_rows(
-    mysqli_query(
-        $koneksi,
-        "SELECT * FROM users
-        WHERE role='siswa'"
-    )
-);
-?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -74,24 +21,6 @@ $totalSiswa = mysqli_num_rows(
 
         <div class="content-box">
 
-            <!-- TOPBAR -->
-
-            <div class="topbar">
-
-                <div class="profile-box">
-
-                    <div class="profile-icon">
-                        <i class="fa-solid fa-user"></i>
-                    </div>
-
-                    Guru
-
-                </div>
-
-            </div>
-
-            <!-- TITLE -->
-
             <h1 class="page-title">
                 Input Nilai
             </h1>
@@ -100,7 +29,6 @@ $totalSiswa = mysqli_num_rows(
                 Berikan nilai untuk tugas yang sudah dikumpulkan siswa.
             </p>
 
-            <!-- STATS -->
 
             <div class="stats-grid">
 
@@ -110,7 +38,7 @@ $totalSiswa = mysqli_num_rows(
                         <i class="fa-solid fa-star"></i>
                     </div>
 
-                    <<h2><?= $sudahDinilai ?></h2>
+                    <h2><?= $sudahDinilai ?></h2>
 
                     <h3>Sudah Dinilai</h3>
 
@@ -170,7 +98,6 @@ $totalSiswa = mysqli_num_rows(
 
             </div>
 
-            <!-- TABLE -->
 
             <div class="table-box">
 
@@ -192,23 +119,7 @@ $totalSiswa = mysqli_num_rows(
 
                     <tbody>
 
-                        <?php
-
-                        $data = mysqli_query(
-                            $koneksi,
-                            "SELECT
-                                pengumpulan_tugas.*,
-                                tugas.nama_tugas,
-                                tugas.mapel
-                            FROM pengumpulan_tugas
-                            LEFT JOIN tugas
-                            ON pengumpulan_tugas.tugas_id = tugas.id
-                            ORDER BY pengumpulan_tugas.tanggal_upload DESC"
-                        );
-
-                        while($row = mysqli_fetch_assoc($data)):
-
-                        ?>
+                        <?php while($row = mysqli_fetch_assoc($pengumpulan)): ?>
 
                         <tr>
 

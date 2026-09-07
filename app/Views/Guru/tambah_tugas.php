@@ -21,18 +21,6 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
 
 <div class="content-box">
 
-<div class="topbar">
-
-
-<div class="profile-box">
-<div class="profile-icon">
-<i class="fa-solid fa-user"></i>
-</div>
-Guru
-</div>
-
-</div>
-
 <h1 class="page-title">
 Tambah Tugas
 </h1>
