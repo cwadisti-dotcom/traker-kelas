@@ -7,7 +7,7 @@ include '../app/Controllers/GuruController.php';
 
 $controller = new GuruController($koneksi);
 
-$data = $controller->mapel();
+$data = $controller->materi();
 extract($data);
 
-include '../app/Views/Guru/mapel.php';
+include '../app/Views/Guru/materi.php';

@@ -22,6 +22,10 @@ $current_page = basename($_SERVER['PHP_SELF']);
                 <i class="fas fa-book"></i>
                 Mapel
             </a>
+            <a href="materi.php" class="nav-item <?= $current_page == 'materi.php' ? 'is-active' : '' ?>">
+                <i class="fas fa-list-check"></i>
+                Materi
+            </a>
             <a href="tugas.php" class="nav-item <?= $current_page == 'tugas.php' ? 'is-active' : '' ?>">
                 <i class="fas fa-list-check"></i>
                 Tugas
