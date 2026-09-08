@@ -22,13 +22,9 @@ $current_page = basename($_SERVER['PHP_SELF']);
                 <i class="fas fa-book"></i>
                 Mapel
             </a>
-            <a href="tambah_tugas.php" class="nav-item <?= $current_page == 'tambah_tugas.php' ? 'is-active' : '' ?>">
-                <i class="fas fa-plus-circle"></i>
-                Tambah Tugas
-            </a>
-            <a href="edit_tugas.php" class="nav-item <?= in_array($current_page, ['edit_tugas.php', 'form_edit_tugas.php']) ? 'is-active' : '' ?>">
-                <i class="fas fa-pen-to-square"></i>
-                Edit Tugas
+            <a href="tugas.php" class="nav-item <?= $current_page == 'tugas.php' ? 'is-active' : '' ?>">
+                <i class="fas fa-list-check"></i>
+                Tugas
             </a>
             <a href="nilai.php" class="nav-item <?= $current_page == 'nilai.php' ? 'is-active' : '' ?>">
                 <i class="fas fa-star"></i>

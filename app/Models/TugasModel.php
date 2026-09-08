@@ -13,8 +13,10 @@ class TugasModel
     {
         return mysqli_query(
             $this->koneksi,
-            "SELECT * FROM tugas
-             ORDER BY deadline ASC"
+            "SELECT tugas.*, mapel.nama_mapel
+             FROM tugas
+             LEFT JOIN mapel ON tugas.mapel_id = mapel.id
+             ORDER BY tugas.deadline ASC"
         );
     }
 
@@ -22,22 +24,20 @@ class TugasModel
     {
         $query = mysqli_query(
             $this->koneksi,
-            "SELECT COUNT(*) as total
-             FROM tugas"
+            "SELECT COUNT(*) as total FROM tugas"
         );
 
-        $data = mysqli_fetch_assoc($query);
-
-        return $data['total'];
+        return mysqli_fetch_assoc($query)['total'];
     }
 
     public function getDashboardGuru()
     {
         return mysqli_query(
             $this->koneksi,
-            "SELECT *
+            "SELECT tugas.*, mapel.nama_mapel
              FROM tugas
-             ORDER BY deadline ASC
+             LEFT JOIN mapel ON tugas.mapel_id = mapel.id
+             ORDER BY tugas.deadline ASC
              LIMIT 10"
         );
     }
@@ -47,34 +47,19 @@ class TugasModel
         $deskripsi,
         $file_pdf,
         $deadline,
-        $guru,
-        $mapel
+        $guru_id,
+        $mapel_id
     )
     {
+        $guru_id  = $guru_id ? (int) $guru_id : 'NULL';
+        $mapel_id = (int) $mapel_id;
+
         return mysqli_query(
             $this->koneksi,
             "INSERT INTO tugas
-            (
-                nama_tugas,
-                deskripsi,
-                file_pdf,
-                deadline,
-                guru,
-                mapel,
-                progress,
-                status
-            )
+            (nama_tugas, deskripsi, file_pdf, deadline, guru_id, mapel_id, status)
             VALUES
-            (
-                '$nama_tugas',
-                '$deskripsi',
-                '$file_pdf',
-                '$deadline',
-                '$guru',
-                '$mapel',
-                0,
-                'Dalam Proses'
-            )"
+            ('$nama_tugas', '$deskripsi', '$file_pdf', '$deadline', $guru_id, $mapel_id, 'Dalam Proses')"
         );
     }
 
@@ -92,6 +77,8 @@ class TugasModel
 
     public function getById($id)
     {
+        $id = (int) $id;
+
         $query = mysqli_query(
             $this->koneksi,
             "SELECT * FROM tugas WHERE id='$id'"
@@ -103,16 +90,19 @@ class TugasModel
     public function update(
         $id,
         $nama_tugas,
-        $mapel,
+        $mapel_id,
         $deskripsi,
         $deadline
     )
     {
+        $id       = (int) $id;
+        $mapel_id = (int) $mapel_id;
+
         return mysqli_query(
             $this->koneksi,
             "UPDATE tugas SET
             nama_tugas='$nama_tugas',
-            mapel='$mapel',
+            mapel_id='$mapel_id',
             deskripsi='$deskripsi',
             deadline='$deadline'
             WHERE id='$id'"
@@ -121,6 +111,8 @@ class TugasModel
 
     public function hapus($id)
     {
+        $id = (int) $id;
+
         return mysqli_query(
             $this->koneksi,
             "DELETE FROM tugas WHERE id='$id'"

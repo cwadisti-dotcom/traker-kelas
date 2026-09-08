@@ -21,6 +21,7 @@ if(isset($_POST['login'])){
 
         $_SESSION['username'] = $data['username'];
         $_SESSION['role'] = $data['role'];
+        $_SESSION['id'] = $data['id'];
 
         // REDIRECT BERDASARKAN ROLE
 

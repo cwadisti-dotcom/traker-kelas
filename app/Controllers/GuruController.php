@@ -83,45 +83,6 @@ class GuruController
         ];
     }
 
-    public function tambahTugas()
-    {
-        if(isset($_POST['simpan']))
-        {
-            $nama_tugas = $_POST['nama_tugas'];
-            $mapel      = $_POST['mapel'];
-            $deskripsi  = $_POST['deskripsi'];
-            $deadline   = $_POST['deadline'];
-            $guru       = "Guru";
-
-            $file_pdf = '';
-
-            if($_FILES['file_pdf']['name'] != '')
-            {
-                $namaFile = $_FILES['file_pdf']['name'];
-                $tmpFile  = $_FILES['file_pdf']['tmp_name'];
-
-                move_uploaded_file(
-                    $tmpFile,
-                    __DIR__ . '/../../uploads/tugas/' . $namaFile
-                );
-
-                $file_pdf = $namaFile;
-            }
-
-            $this->tugasModel->tambah(
-                $nama_tugas,
-                $deskripsi,
-                $file_pdf,
-                $deadline,
-                $guru,
-                $mapel
-            );
-
-            header("Location: index.php");
-            exit;
-        }
-    }
-
     public function monitoring()
     {
         return [
@@ -143,42 +104,69 @@ class GuruController
         ];
     }
 
-   public function formEditTugas($id)
+    public function tugas()
     {
-        return [
-            'tugas' => $this->tugasModel->getById($id)
-        ];
-    }
+        if(isset($_GET['hapus']))
+        {
+            $this->tugasModel->hapus($_GET['hapus']);
 
-   public function updateTugas()
-    {
+            header("Location: tugas.php");
+            exit;
+        }
+
+        if(isset($_POST['simpan']))
+        {
+            $nama_tugas = $_POST['nama_tugas'];
+            $mapel_id   = $_POST['mapel_id'];
+            $deskripsi  = $_POST['deskripsi'];
+            $deadline   = $_POST['deadline'];
+            $guru_id    = $_SESSION['id'] ?? null;
+
+            $file_pdf = '';
+
+            if($_FILES['file_pdf']['name'] != '')
+            {
+                $namaFile = $_FILES['file_pdf']['name'];
+                $tmpFile  = $_FILES['file_pdf']['tmp_name'];
+
+                move_uploaded_file(
+                    $tmpFile,
+                    __DIR__ . '/../../uploads/tugas/' . $namaFile
+                );
+
+                $file_pdf = $namaFile;
+            }
+
+            $this->tugasModel->tambah(
+                $nama_tugas,
+                $deskripsi,
+                $file_pdf,
+                $deadline,
+                $guru_id,
+                $mapel_id
+            );
+
+            header("Location: tugas.php");
+            exit;
+        }
+
         if(isset($_POST['update']))
         {
             $this->tugasModel->update(
                 $_POST['id'],
                 $_POST['nama_tugas'],
-                $_POST['mapel'],
+                $_POST['mapel_id'],
                 $_POST['deskripsi'],
                 $_POST['deadline']
             );
 
-            header("Location: edit_tugas.php");
+            header("Location: tugas.php");
             exit;
         }
-    }
 
-    public function hapusTugas($id)
-    {
-        $this->tugasModel->hapus($id);
-
-        header("Location: edit_tugas.php");
-        exit;
-    }
-
-    public function editTugas()
-    {
         return [
-            'tugas' => $this->tugasModel->getAll()
+            'tugas' => $this->tugasModel->getAll(),
+            'mapelList' => $this->mapelModel->getAll()
         ];
     }
 
