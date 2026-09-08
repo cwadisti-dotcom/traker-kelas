@@ -1,21 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
     <meta charset="UTF-8">
     <title>Dashboard Guru</title>
-
     <link rel="stylesheet" href="../assets/css/guru.css">
-
     <link rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
 </head>
 <body>
 
 <div class="wrapper">
 
-    <?php include 'sidebar.php'; ?>
+    <?php include __DIR__ . '/sidebar.php'; ?>
 
     <div class="main-content">
 
@@ -123,7 +119,7 @@
                         <td><?= $row['nama_tugas']; ?></td>
 
                         <td>
-                            <?= !empty($row['mapel']) ? $row['mapel'] : '-'; ?>
+                            <?= !empty($row['nama_mapel']) ? $row['nama_mapel'] : '-'; ?>
                         </td>
 
                         <td>

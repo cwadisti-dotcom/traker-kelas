@@ -43,10 +43,13 @@ class PengumpulanModel
             $this->koneksi,
             "SELECT
                 pengumpulan_tugas.*,
-                tugas.nama_tugas
+                tugas.nama_tugas,
+                users.username AS siswa
             FROM pengumpulan_tugas
             LEFT JOIN tugas
             ON pengumpulan_tugas.tugas_id = tugas.id
+            LEFT JOIN users
+            ON pengumpulan_tugas.siswa_id = users.id
             ORDER BY pengumpulan_tugas.tanggal_upload DESC"
         );
     }
@@ -95,10 +98,15 @@ class PengumpulanModel
             "SELECT
                 pengumpulan_tugas.*,
                 tugas.nama_tugas,
-                tugas.mapel
+                mapel.nama_mapel AS mapel,
+                users.username AS siswa
             FROM pengumpulan_tugas
             LEFT JOIN tugas
             ON pengumpulan_tugas.tugas_id = tugas.id
+            LEFT JOIN mapel
+            ON tugas.mapel_id = mapel.id
+            LEFT JOIN users
+            ON pengumpulan_tugas.siswa_id = users.id
             ORDER BY pengumpulan_tugas.tanggal_upload DESC"
         );
     }

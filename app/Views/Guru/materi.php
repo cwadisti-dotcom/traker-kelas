@@ -10,7 +10,7 @@
 
 <div class="wrapper">
 
-    <?php include 'sidebar.php'; ?>
+    <?php include __DIR__ . '/sidebar.php'; ?>
 
     <div class="main-content">
 
