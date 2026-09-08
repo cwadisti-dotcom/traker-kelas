@@ -10,28 +10,27 @@ $current_page = basename($_SERVER['PHP_SELF']);
         </div>
         <div class="nav-label">MENU</div>
         <nav class="nav">
-            <a href="index.php"
-               class="nav-item <?= $current_page == 'index.php' ? 'is-active' : '' ?>">
+            <a href="index.php" class="nav-item <?= $current_page == 'index.php' ? 'is-active' : '' ?>">
                 <i class="fas fa-table-columns"></i>
                 Dashboard
             </a>
-            <a href="tambah_tugas.php"
-               class="nav-item <?= $current_page == 'tambah_tugas.php' ? 'is-active' : '' ?>">
-                <i class="fas fa-plus-circle"></i>
-                Tambah Tugas
-            </a>
-            <a href="edit_tugas.php"
-               class="nav-item <?= in_array($current_page, ['edit_tugas.php', 'form_edit_tugas.php']) ? 'is-active' : '' ?>">
-                <i class="fas fa-pen-to-square"></i>
-                Edit Tugas
-            </a>
-            <a href="monitoring.php"
-               class="nav-item <?= $current_page == 'monitoring.php' ? 'is-active' : '' ?>">
+            <a href="monitoring.php" class="nav-item <?= $current_page == 'monitoring.php' ? 'is-active' : '' ?>">
                 <i class="fas fa-chart-line"></i>
                 Monitoring
             </a>
-            <a href="nilai.php"
-               class="nav-item <?= $current_page == 'nilai.php' ? 'is-active' : '' ?>">
+            <a href="mapel.php" class="nav-item <?= $current_page == 'mapel.php' ? 'is-active' : '' ?>">
+                <i class="fas fa-book"></i>
+                Mapel
+            </a>
+            <a href="tambah_tugas.php" class="nav-item <?= $current_page == 'tambah_tugas.php' ? 'is-active' : '' ?>">
+                <i class="fas fa-plus-circle"></i>
+                Tambah Tugas
+            </a>
+            <a href="edit_tugas.php" class="nav-item <?= in_array($current_page, ['edit_tugas.php', 'form_edit_tugas.php']) ? 'is-active' : '' ?>">
+                <i class="fas fa-pen-to-square"></i>
+                Edit Tugas
+            </a>
+            <a href="nilai.php" class="nav-item <?= $current_page == 'nilai.php' ? 'is-active' : '' ?>">
                 <i class="fas fa-star"></i>
                 Input Nilai
             </a>

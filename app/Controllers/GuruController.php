@@ -5,6 +5,7 @@ include __DIR__.'/../../config/koneksi.php';
 include __DIR__.'/../Models/TugasModel.php';
 include __DIR__.'/../Models/PengumpulanModel.php';
 include __DIR__.'/../Models/UserModel.php';
+include __DIR__.'/../Models/MapelModel.php';
 
 
 class GuruController
@@ -12,12 +13,14 @@ class GuruController
     private $tugasModel;
     private $pengumpulanModel;
     private $userModel;
+    private $mapelModel;
 
     public function __construct($koneksi)
     {
         $this->tugasModel = new TugasModel($koneksi);
         $this->pengumpulanModel = new PengumpulanModel($koneksi);
         $this->userModel = new UserModel($koneksi);
+        $this->mapelModel = new MapelModel($koneksi);
     }
 
     public function dashboard()
@@ -43,6 +46,40 @@ class GuruController
             'totalDinilai' => $totalDinilai,
             'totalBelumDinilai' => $totalBelumDinilai,
             'tugas' => $tugas
+        ];
+    }
+
+    public function mapel()
+    {
+        if(isset($_GET['hapus']))
+        {
+            $this->mapelModel->hapus($_GET['hapus']);
+
+            header("Location: mapel.php");
+            exit;
+        }
+
+        if(isset($_POST['simpan_mapel']))
+        {
+            $this->mapelModel->tambah($_POST['nama_mapel']);
+
+            header("Location: mapel.php");
+            exit;
+        }
+
+        if(isset($_POST['update_mapel']))
+        {
+            $this->mapelModel->update(
+                $_POST['id'],
+                $_POST['nama_mapel']
+            );
+
+            header("Location: mapel.php");
+            exit;
+        }
+
+        return [
+            'mapelList' => $this->mapelModel->getAll()
         ];
     }
 
