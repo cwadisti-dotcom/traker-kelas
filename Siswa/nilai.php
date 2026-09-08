@@ -1,6 +1,10 @@
 <?php
+session_start();
 include '../config/koneksi.php';
 $current_page = basename($_SERVER['PHP_SELF']);
+
+// Ambil id siswa yang sedang login
+$siswa_id = $_SESSION['id'];
 ?>
 
 <!DOCTYPE html>
@@ -85,7 +89,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
                         <i class="fa-solid fa-user"></i>
                     </div>
 
-                    <span>Siswa</span>
+                    <span><?= htmlspecialchars($_SESSION['username']); ?></span>
 
                 </div>
 
@@ -115,19 +119,19 @@ $current_page = basename($_SERVER['PHP_SELF']);
 
                 <?php
 
-                $siswa = "siswa1";
-
                 $query = mysqli_query(
                     $koneksi,
                     "SELECT
                         pengumpulan_tugas.nilai,
                         pengumpulan_tugas.status,
                         tugas.nama_tugas,
-                        tugas.mapel
+                        mapel.nama_mapel
                     FROM pengumpulan_tugas
                     JOIN tugas
                         ON tugas.id = pengumpulan_tugas.tugas_id
-                    WHERE pengumpulan_tugas.siswa = '$siswa'
+                    LEFT JOIN mapel
+                        ON tugas.mapel_id = mapel.id
+                    WHERE pengumpulan_tugas.siswa_id = '$siswa_id'
                     ORDER BY pengumpulan_tugas.id DESC"
                 );
 
@@ -140,8 +144,8 @@ $current_page = basename($_SERVER['PHP_SELF']);
                     <td><?= $row['nama_tugas']; ?></td>
 
                     <td>
-                        <?= !empty($row['mapel'])
-                            ? $row['mapel']
+                        <?= !empty($row['nama_mapel'])
+                            ? $row['nama_mapel']
                             : '-'; ?>
                     </td>
 
@@ -150,7 +154,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
                         <?php if($row['status'] == 'Sudah Dinilai'): ?>
 
                             <span class="badge badge-success">
-                                Sudah Dinilai  guru
+                                Sudah Dinilai
                             </span>
 
                         <?php else: ?>

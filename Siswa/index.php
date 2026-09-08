@@ -1,21 +1,26 @@
 <?php
+session_start();
 include '../config/koneksi.php';
 
-$siswa = 'siswa1';
+// Ambil id siswa yang sedang login (bukan hardcode lagi)
+$siswa_id = $_SESSION['id'];
 
 $totalTugas = mysqli_num_rows(
-    mysqli_query($koneksi,"SELECT * FROM tugas")
+    mysqli_query($koneksi, "SELECT * FROM tugas")
 );
 
 $tugasTerdekat = mysqli_query(
     $koneksi,
     "SELECT
         t.*,
+        m.nama_mapel,
         COALESCE(p.status,'Belum Upload') as status_siswa
     FROM tugas t
+    LEFT JOIN mapel m
+        ON t.mapel_id = m.id
     LEFT JOIN pengumpulan_tugas p
         ON t.id = p.tugas_id
-        AND p.siswa = '$siswa'
+        AND p.siswa_id = '$siswa_id'
     ORDER BY t.deadline ASC
     LIMIT 5"
 );
@@ -25,14 +30,14 @@ $tugasSelesai = mysqli_num_rows(
         $koneksi,
         "SELECT *
         FROM pengumpulan_tugas
-        WHERE siswa='$siswa'
-        AND status='Sudah Dinilai'"
+        WHERE siswa_id = '$siswa_id'
+        AND status = 'Sudah Dinilai'"
     )
 );
 
 $belumSelesai = $totalTugas - $tugasSelesai;
 
-if($belumSelesai < 0){
+if ($belumSelesai < 0) {
     $belumSelesai = 0;
 }
 
@@ -43,7 +48,7 @@ $terlambat = mysqli_num_rows(
         FROM tugas t
         LEFT JOIN pengumpulan_tugas p
             ON t.id = p.tugas_id
-            AND p.siswa='$siswa'
+            AND p.siswa_id = '$siswa_id'
         WHERE t.deadline < CURDATE()
         AND p.id IS NULL"
     )
@@ -126,10 +131,8 @@ $terlambat = mysqli_num_rows(
     <!-- MAIN -->
     <main class="main-content">
 
-        <!-- TAMBAHKAN DI DALAM <main class="main-content"> -->
-
         <div class="topbar">
-            
+
             <div class="profile">
 
                 <i class="fa-regular fa-bell"></i>
@@ -139,7 +142,7 @@ $terlambat = mysqli_num_rows(
                         <i class="fa-solid fa-user"></i>
                     </div>
 
-                    <span>Siswa</span>
+                    <span><?= htmlspecialchars($_SESSION['username']); ?></span>
                 </div>
 
             </div>
@@ -148,7 +151,7 @@ $terlambat = mysqli_num_rows(
 
         <div class="page-title">
             <h1>Dashboard Siswa</h1>
-            <p>Selamat datang, Siswa! </p>
+            <p>Selamat datang, <?= htmlspecialchars($_SESSION['username']); ?>! </p>
         </div>
 
         <!-- CARD -->
@@ -163,7 +166,7 @@ $terlambat = mysqli_num_rows(
                 <h2><?= $totalTugas; ?></h2>
                 <h3>Total Tugas</h3>
 
-                <p>Jumlah semua tugas simple abiz dari guru</p> 
+                <p>Jumlah semua tugas dari guru</p>
 
             </div>
 
@@ -197,7 +200,7 @@ $terlambat = mysqli_num_rows(
                     <i class="fa-regular fa-file-lines"></i>
                 </div>
 
-                <h2><?= $terlambat; ?></h2> 
+                <h2><?= $terlambat; ?></h2>
                 <h3>Perlu Dikumpulkan</h3>
                 <p>Melewati deadline</p>
 
@@ -285,7 +288,7 @@ $terlambat = mysqli_num_rows(
                         <td rowspan="2" class="mapel soft-mint">
                             PENJAS
                         </td>
-                        
+
                     </tr>
 
                     <tr>
@@ -301,15 +304,15 @@ $terlambat = mysqli_num_rows(
                             PROPGR
                         </td>
 
-                        
-                        
+
+
                     </tr>
 
                     <tr>
                         <td>10:00 - 10:15</td>
 
                         <td colspan="5" class="istirahat">
-                            ISTIRAHAT 
+                            ISTIRAHAT
                         </td>
                     </tr>
 
@@ -349,7 +352,7 @@ $terlambat = mysqli_num_rows(
                         <td>11:45 - 12:30</td>
 
                         <td colspan="5" class="istirahat">
-                            ISHOMA 
+                            ISHOMA
                         </td>
                     </tr>
 
@@ -420,8 +423,8 @@ $terlambat = mysqli_num_rows(
                     <h3><?= $tugas['nama_tugas']; ?></h3>
 
                     <p>
-                        <i class="fa-solid fa-user"></i>
-                        <?= !empty($tugas['guru']) ? $tugas['guru'] : 'Guru'; ?>
+                        <i class="fa-solid fa-book"></i>
+                        <?= !empty($tugas['nama_mapel']) ? $tugas['nama_mapel'] : 'Mapel'; ?>
                     </p>
 
                     <p>
