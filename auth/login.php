@@ -7,10 +7,13 @@ if(isset($_POST['login'])){
     $username = $_POST['username'];
     $password = $_POST['password'];
 
+    $username_esc = mysqli_real_escape_string($koneksi, $username);
+    $password_esc = mysqli_real_escape_string($koneksi, $password);
+
     $query = mysqli_query($koneksi, "
-        SELECT * FROM users 
-        WHERE username='$username'
-        AND password='$password'
+        SELECT * FROM users
+        WHERE username='$username_esc'
+        AND password='$password_esc'
     ");
 
     $cek = mysqli_num_rows($query);
@@ -39,6 +42,8 @@ if(isset($_POST['login'])){
 
         }
 
+        exit;
+
     }else{
 
         $error = "Username atau password salah!";
@@ -55,174 +60,123 @@ if(isset($_POST['login'])){
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Login</title>
+<title>Login — DeadlineHub</title>
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-<style>
-
-*{
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Poppins', sans-serif;
-}
-
-body{
-    background: #ddd2c3;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-}
-
-.login-box{
-    width: 420px;
-    background: #e9dfd2;
-    padding: 45px;
-    border-radius: 35px;
-
-    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-}
-
-.login-box h1{
-    font-size: 42px;
-    color: #4d3828;
-    margin-bottom: 10px;
-}
-
-.login-box p{
-    color: #7a6758;
-    margin-bottom: 35px;
-}
-
-.input-group{
-    margin-bottom: 22px;
-}
-
-.input-group label{
-    display: block;
-    margin-bottom: 10px;
-    color: #5c4635;
-    font-weight: 600;
-}
-
-.input-group input{
-    width: 100%;
-    padding: 18px 20px;
-
-    border: none;
-    outline: none;
-
-    border-radius: 18px;
-
-    background: #f8f3ed;
-
-    font-size: 15px;
-}
-
-button{
-    width: 100%;
-    padding: 18px;
-
-    border: none;
-    border-radius: 18px;
-
-    background: #a67c5b;
-    color: white;
-
-    font-size: 16px;
-    font-weight: 600;
-
-    cursor: pointer;
-
-    transition: 0.3s;
-}
-
-button:hover{
-    background: #8f684a;
-}
-
-.error{
-    background: #ffd7d7;
-    color: #b40000;
-
-    padding: 14px;
-    border-radius: 14px;
-
-    margin-bottom: 20px;
-    font-size: 14px;
-}
-
-.register{
-    text-align: center;
-    margin-top: 20px;
-}
-
-.register a{
-    color: #8f684a;
-    text-decoration: none;
-    font-weight: 600;
-}
-
-</style>
+<link rel="stylesheet" href="../assets/css/auth.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
 </head>
 
 <body>
 
-<div class="login-box">
+<div class="auth-shell">
 
-    <h1>Welcome 👋</h1>
-    <p>Login ke DeadlineHub</p>
+    <div class="auth-brand">
 
-    <?php if(isset($error)) { ?>
+        <div class="auth-brand-top">
 
-        <div class="error">
-            <?php echo $error; ?>
-        </div>
+            <div class="auth-logo">
+                <div class="auth-logo-mark">DH</div>
+                <div class="auth-logo-name">DeadlineHub</div>
+            </div>
 
-    <?php } ?>
+            <span class="auth-tag">Selamat datang kembali</span>
 
-    <form method="POST">
+            <h1 class="auth-brand-title">
+                Kelola tugas dan<br>deadline kelasmu.
+            </h1>
 
-        <div class="input-group">
-
-            <label>Username</label>
-
-            <input 
-                type="text" 
-                name="username"
-                placeholder="Masukkan username..."
-                required
-            >
+            <p class="auth-brand-sub">
+                Masuk untuk melihat tugas, mengumpulkan jawaban, dan memantau progres belajar dalam satu tempat.
+            </p>
 
         </div>
 
-        <div class="input-group">
+        <div class="auth-brand-bottom">
 
-            <label>Password</label>
+            <div class="auth-feature-list">
 
-            <input 
-                type="password" 
-                name="password"
-                placeholder="Masukkan password..."
-                required
-            >
+                <div class="auth-feature">
+                    <i class="fa-solid fa-clock"></i>
+                    Notifikasi deadline tugas
+                </div>
+
+                <div class="auth-feature">
+                    <i class="fa-solid fa-cloud-arrow-up"></i>
+                    Upload jawaban langsung online
+                </div>
+
+                <div class="auth-feature">
+                    <i class="fa-solid fa-chart-line"></i>
+                    Pantau progres dan nilai
+                </div>
+
+            </div>
 
         </div>
 
-        <button type="submit" name="login">
-            Login
-        </button>
+    </div>
 
-    </form>
+    <div class="auth-panel">
 
-    <div class="register">
-        Belum punya akun?
-        <a href="register.php">Register</a>
+        <div class="auth-box">
+
+            <div class="eyebrow">Masuk Akun</div>
+            <h1>Selamat Datang 👋</h1>
+            <p class="lead">Login ke DeadlineHub.</p>
+
+            <?php if(isset($error)) { ?>
+
+                <div class="auth-error">
+                    <i class="fa-solid fa-circle-exclamation"></i>
+                    <?= htmlspecialchars($error) ?>
+                </div>
+
+            <?php } ?>
+
+            <form method="POST">
+
+                <div class="form-group">
+
+                    <label>Username</label>
+
+                    <input
+                        class="form-input"
+                        type="text"
+                        name="username"
+                        placeholder="Masukkan username..."
+                        required
+                    >
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>Password</label>
+
+                    <input
+                        class="form-input"
+                        type="password"
+                        name="password"
+                        placeholder="Masukkan password..."
+                        required
+                    >
+
+                </div>
+
+                <button type="submit" class="submit-btn" name="login">
+                    Login
+                </button>
+
+            </form>
+
+            <div class="auth-switch">
+                Belum punya akun?
+                <a href="register.php">Register</a>
+            </div>
+
+        </div>
+
     </div>
 
 </div>
