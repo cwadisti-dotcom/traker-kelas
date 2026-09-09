@@ -3,11 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <title>Dashboard Guru</title>
-    <link rel="stylesheet" href="../assets/css/guru.css">
-    <link rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
-<body>
+<body class="theme-guru">
 
 <div class="wrapper">
 
@@ -29,7 +28,7 @@
 
                 <div class="stat-card">
 
-                    <div class="stat-icon bg-yellow">
+                    <div class="stat-icon bg-red">
                         <i class="fa-solid fa-book"></i>
                     </div>
 
@@ -45,7 +44,7 @@
 
                 <div class="stat-card">
 
-                    <div class="stat-icon bg-yellow">
+                    <div class="stat-icon bg-blue">
                         <i class="fa-solid fa-check"></i>
                     </div>
 
@@ -77,7 +76,7 @@
 
                 <div class="stat-card">
 
-                    <div class="stat-icon bg-yellow">
+                    <div class="stat-icon bg-green">
                         <i class="fa-solid fa-star"></i>
                     </div>
 

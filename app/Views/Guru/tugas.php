@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <title>Tugas</title>
-    <link rel="stylesheet" href="../assets/css/guru.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
-<body>
+<body class="theme-guru">
 
 <div class="wrapper">
 

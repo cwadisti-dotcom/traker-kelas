@@ -1,5 +1,10 @@
 <?php
-$current_page = basename($_SERVER['PHP_SELF']);
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+$current_page  = basename($_SERVER['PHP_SELF']);
+$guru_username = $_SESSION['username'] ?? 'Guru';
 ?>
 
 <aside class="sidebar">
@@ -44,7 +49,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
                 <div class="profile-avatar">
                     <i class="fas fa-user"></i>
                 </div>
-                <span class="profile-name">Guru</span>
+                <span class="profile-name"><?= htmlspecialchars($guru_username) ?></span>
                 <i class="fas fa-chevron-up profile-caret"></i>
             </button>
 
@@ -54,7 +59,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
                         <i class="fas fa-user"></i>
                     </div>
                     <div class="profile-dropdown-info">
-                        <span class="profile-dropdown-name">Guru</span>
+                        <span class="profile-dropdown-name"><?= htmlspecialchars($guru_username) ?></span>
                         <span class="profile-dropdown-role">Akun Pengajar</span>
                     </div>
                 </div>
