@@ -1,9 +1,6 @@
 <?php
 
-session_start();
-
-include __DIR__ . '/../../config/koneksi.php';
-include __DIR__ . '/../Models/UserModel.php';
+require_once __DIR__ . '/../Models/UserModel.php';
 
 class AuthController
 {
@@ -14,44 +11,83 @@ class AuthController
         $this->userModel = new UserModel($koneksi);
     }
 
-    public function login()
+    /**
+     * @return array{success:bool, error?:string, redirect?:string}
+     */
+    public function login($username, $password)
     {
-        if(isset($_POST['login']))
-        {
-            $username = $_POST['username'];
-            $password = $_POST['password'];
+        $user = $this->userModel->findByUsername($username);
 
-            $user = $this->userModel->login(
-                $username,
-                $password
-            );
-
-            if($user)
-            {
-                $_SESSION['username'] = $user['username'];
-                $_SESSION['role'] = $user['role'];
-
-                switch($user['role'])
-                {
-                    case 'admin':
-                        header("Location: ../admin/index.php");
-                        break;
-
-                    case 'guru':
-                        header("Location: ../Guru/index.php");
-                        break;
-
-                    case 'siswa':
-                        header("Location: ../Siswa/index.php");
-                        break;
-                }
-
-                exit;
-            }
-
-            return "Username atau Password salah!";
+        if(!$user || !password_verify($password, $user['password'])){
+            return [
+                'success' => false,
+                'error'   => 'Username atau password salah!',
+            ];
         }
 
-        return null;
+        $_SESSION['id']       = $user['id'];
+        $_SESSION['username'] = $user['username'];
+        $_SESSION['role']     = $user['role'];
+
+        return [
+            'success'  => true,
+            'redirect' => $this->redirectPathByRole($user['role']),
+        ];
+    }
+
+    /**
+     * @return array{success:bool, error?:string}
+     */
+    public function register($username, $password, $confirmPassword)
+    {
+        $username = trim($username);
+
+        if($username === '' || $password === ''){
+            return [
+                'success' => false,
+                'error'   => 'Username dan password wajib diisi!',
+            ];
+        }
+
+        if($password !== $confirmPassword){
+            return [
+                'success' => false,
+                'error'   => 'Konfirmasi password tidak cocok!',
+            ];
+        }
+
+        if($this->userModel->findByUsername($username)){
+            return [
+                'success' => false,
+                'error'   => 'Username sudah dipakai, coba yang lain!',
+            ];
+        }
+
+        // Password di-hash di sini, sebelum masuk ke model / database.
+        $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+
+        $this->userModel->create($username, $hashedPassword, 'siswa');
+
+        return ['success' => true];
+    }
+
+    public function logout()
+    {
+        $_SESSION = [];
+        session_destroy();
+    }
+
+    private function redirectPathByRole($role)
+    {
+        switch($role){
+            case 'admin':
+                return '../admin/index.php';
+            case 'guru':
+                return '../Guru/index.php';
+            case 'siswa':
+                return '../Siswa/index.php';
+            default:
+                return '../auth/login.php';
+        }
     }
 }

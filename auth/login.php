@@ -1,54 +1,22 @@
 <?php
 session_start();
-include '../config/koneksi.php';
+
+require_once __DIR__ . '/../config/koneksi.php';
+require_once __DIR__ . '/../app/Controllers/AuthController.php';
+
+$auth  = new AuthController($koneksi);
+$error = null;
 
 if(isset($_POST['login'])){
 
-    $username = $_POST['username'];
-    $password = $_POST['password'];
+    $result = $auth->login($_POST['username'], $_POST['password']);
 
-    $username_esc = mysqli_real_escape_string($koneksi, $username);
-    $password_esc = mysqli_real_escape_string($koneksi, $password);
-
-    $query = mysqli_query($koneksi, "
-        SELECT * FROM users
-        WHERE username='$username_esc'
-        AND password='$password_esc'
-    ");
-
-    $cek = mysqli_num_rows($query);
-
-    if($cek > 0){
-
-        $data = mysqli_fetch_assoc($query);
-
-        $_SESSION['username'] = $data['username'];
-        $_SESSION['role'] = $data['role'];
-        $_SESSION['id'] = $data['id'];
-
-        // REDIRECT BERDASARKAN ROLE
-
-        if($data['role'] == "admin"){
-
-            header("Location: ../admin/index.php");
-
-        }elseif($data['role'] == "guru"){
-
-            header("Location: ../Guru/index.php");
-
-        }elseif($data['role'] == "siswa"){
-
-            header("Location: ../Siswa/index.php");
-
-        }
-
+    if($result['success']){
+        header("Location: " . $result['redirect']);
         exit;
-
-    }else{
-
-        $error = "Username atau password salah!";
-
     }
+
+    $error = $result['error'];
 
 }
 ?>
@@ -62,12 +30,12 @@ if(isset($_POST['login'])){
 
 <title>Login — DeadlineHub</title>
 
-<link rel="stylesheet" href="../assets/css/auth.css">
+<link rel="stylesheet" href="../assets/css/style.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
 </head>
 
-<body>
+<body class="theme-auth">
 
 <div class="auth-shell">
 
@@ -125,7 +93,7 @@ if(isset($_POST['login'])){
             <h1>Selamat Datang 👋</h1>
             <p class="lead">Login ke DeadlineHub.</p>
 
-            <?php if(isset($error)) { ?>
+            <?php if($error){ ?>
 
                 <div class="auth-error">
                     <i class="fa-solid fa-circle-exclamation"></i>
@@ -154,13 +122,22 @@ if(isset($_POST['login'])){
 
                     <label>Password</label>
 
-                    <input
-                        class="form-input"
-                        type="password"
-                        name="password"
-                        placeholder="Masukkan password..."
-                        required
-                    >
+                    <div class="password-wrapper">
+
+                        <input
+                            class="form-input"
+                            type="password"
+                            name="password"
+                            id="password"
+                            placeholder="Masukkan password..."
+                            required
+                        >
+
+                        <button type="button" class="toggle-password" onclick="togglePassword('password', this)" aria-label="Tampilkan password">
+                            <i class="fa-solid fa-eye"></i>
+                        </button>
+
+                    </div>
 
                 </div>
 
@@ -180,6 +157,27 @@ if(isset($_POST['login'])){
     </div>
 
 </div>
+
+<script>
+
+function togglePassword(fieldId, btn){
+
+    const input = document.getElementById(fieldId);
+    const icon = btn.querySelector('i');
+
+    if(input.type === 'password'){
+        input.type = 'text';
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+    }else{
+        input.type = 'password';
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+    }
+
+}
+
+</script>
 
 </body>
 </html>

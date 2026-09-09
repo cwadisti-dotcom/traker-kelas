@@ -1,51 +1,28 @@
 <?php
 
-include '../config/koneksi.php';
+require_once __DIR__ . '/../config/koneksi.php';
+require_once __DIR__ . '/../app/Controllers/AuthController.php';
 
-$error = null;
+$auth     = new AuthController($koneksi);
+$error    = null;
+$username = '';
 
 if(isset($_POST['register'])){
 
     $username = trim($_POST['username']);
-    $password = $_POST['password'];
-    $confirm  = $_POST['confirm_password'];
 
-    $role = "siswa";
+    $result = $auth->register(
+        $username,
+        $_POST['password'],
+        $_POST['confirm_password']
+    );
 
-    if($username === '' || $password === ''){
-
-        $error = "Username dan password wajib diisi!";
-
-    }elseif($password !== $confirm){
-
-        $error = "Konfirmasi password tidak cocok!";
-
-    }else{
-
-        $username_esc = mysqli_real_escape_string($koneksi, $username);
-        $password_esc = mysqli_real_escape_string($koneksi, $password);
-
-        $cek = mysqli_query($koneksi, "
-            SELECT id FROM users WHERE username='$username_esc'
-        ");
-
-        if(mysqli_num_rows($cek) > 0){
-
-            $error = "Username sudah dipakai, coba yang lain!";
-
-        }else{
-
-            mysqli_query($koneksi, "
-                INSERT INTO users(username,password,role)
-                VALUES('$username_esc','$password_esc','$role')
-            ");
-
-            header("Location: login.php");
-            exit;
-
-        }
-
+    if($result['success']){
+        header("Location: login.php");
+        exit;
     }
+
+    $error = $result['error'];
 
 }
 
@@ -60,12 +37,12 @@ if(isset($_POST['register'])){
 
 <title>Register — DeadlineHub</title>
 
-<link rel="stylesheet" href="../assets/css/auth.css">
+<link rel="stylesheet" href="../assets/css/style.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
 </head>
 
-<body>
+<body class="theme-auth">
 
 <div class="auth-shell">
 
@@ -143,7 +120,7 @@ if(isset($_POST['register'])){
                         type="text"
                         name="username"
                         placeholder="Masukkan username..."
-                        value="<?= isset($username) ? htmlspecialchars($username) : '' ?>"
+                        value="<?= htmlspecialchars($username) ?>"
                         required
                     >
 
@@ -153,13 +130,22 @@ if(isset($_POST['register'])){
 
                     <label>Password</label>
 
-                    <input
-                        class="form-input"
-                        type="password"
-                        name="password"
-                        placeholder="Masukkan password..."
-                        required
-                    >
+                    <div class="password-wrapper">
+
+                        <input
+                            class="form-input"
+                            type="password"
+                            name="password"
+                            id="password"
+                            placeholder="Masukkan password..."
+                            required
+                        >
+
+                        <button type="button" class="toggle-password" onclick="togglePassword('password', this)" aria-label="Tampilkan password">
+                            <i class="fa-solid fa-eye"></i>
+                        </button>
+
+                    </div>
 
                 </div>
 
@@ -167,13 +153,22 @@ if(isset($_POST['register'])){
 
                     <label>Konfirmasi Password</label>
 
-                    <input
-                        class="form-input"
-                        type="password"
-                        name="confirm_password"
-                        placeholder="Ulangi password..."
-                        required
-                    >
+                    <div class="password-wrapper">
+
+                        <input
+                            class="form-input"
+                            type="password"
+                            name="confirm_password"
+                            id="confirm_password"
+                            placeholder="Ulangi password..."
+                            required
+                        >
+
+                        <button type="button" class="toggle-password" onclick="togglePassword('confirm_password', this)" aria-label="Tampilkan password">
+                            <i class="fa-solid fa-eye"></i>
+                        </button>
+
+                    </div>
 
                 </div>
 
@@ -193,6 +188,27 @@ if(isset($_POST['register'])){
     </div>
 
 </div>
+
+<script>
+
+function togglePassword(fieldId, btn){
+
+    const input = document.getElementById(fieldId);
+    const icon = btn.querySelector('i');
+
+    if(input.type === 'password'){
+        input.type = 'text';
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+    }else{
+        input.type = 'password';
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+    }
+
+}
+
+</script>
 
 </body>
 </html>
