@@ -3,53 +3,83 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-$current_page = basename($_SERVER['PHP_SELF']);
+$current_page    = basename($_SERVER['PHP_SELF']);
+$siswa_username  = $_SESSION['username'] ?? 'Siswa';
 ?>
 
 <aside class="sidebar">
-
     <div class="sidebar-top">
-
         <div class="logo">
-            <h2>DeadlineHub</h2>
+            <span class="logo-mark">DH</span>
+            <span class="logo-name">DeadlineHub</span>
         </div>
-
-        <div class="menu-title">SISWA</div>
-
-        <ul class="menu">
-
-            <li class="<?= $current_page == 'index.php' ? 'active' : '' ?>">
-                <a href="index.php">
-                    <i class="fa-solid fa-table-columns"></i>
-                    Dashboard
-                </a>
-            </li>
-
-            <li class="<?= $current_page == 'tugas_saya.php' || $current_page == 'upload_tugas.php' ? 'active' : '' ?>">
-                <a href="tugas_saya.php">
-                    <i class="fa-regular fa-clipboard"></i>
-                    Tugas Saya
-                </a>
-            </li>
-
-            <li class="<?= $current_page == 'nilai.php' ? 'active' : '' ?>">
-                <a href="nilai.php">
-                    <i class="fa-solid fa-chart-column"></i>
-                    Nilai
-                </a>
-            </li>
-
-        </ul>
-
+        <div class="nav-label">MENU</div>
+        <nav class="nav">
+            <a href="index.php" class="nav-item <?= $current_page == 'index.php' ? 'is-active' : '' ?>">
+                <i class="fas fa-table-columns"></i>
+                Dashboard
+            </a>
+            <a href="tugas_saya.php" class="nav-item <?= $current_page == 'tugas_saya.php' || $current_page == 'upload_tugas.php' ? 'is-active' : '' ?>">
+                <i class="fas fa-clipboard"></i>
+                Tugas Saya
+            </a>
+            <a href="nilai.php" class="nav-item <?= $current_page == 'nilai.php' ? 'is-active' : '' ?>">
+                <i class="fas fa-chart-column"></i>
+                Nilai
+            </a>
+        </nav>
     </div>
 
-    <ul class="menu">
-        <li class="logout">
-            <a href="../auth/logout.php">
-                <i class="fa-solid fa-right-from-bracket"></i>
-                Logout
-            </a>
-        </li>
-    </ul>
+    <div class="sidebar-bottom">
+        <div class="profile-wrapper">
 
+            <button type="button" class="sidebar-profile" id="profileTrigger">
+                <div class="profile-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <span class="profile-name"><?= htmlspecialchars($siswa_username) ?></span>
+                <i class="fas fa-chevron-up profile-caret"></i>
+            </button>
+
+            <div class="profile-dropdown" id="profileDropdown">
+                <div class="profile-dropdown-header">
+                    <div class="profile-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="profile-dropdown-info">
+                        <span class="profile-dropdown-name"><?= htmlspecialchars($siswa_username) ?></span>
+                        <span class="profile-dropdown-role">Akun Siswa</span>
+                    </div>
+                </div>
+
+                <div class="sep"></div>
+
+                <a href="../auth/logout.php" class="dropdown-item is-danger">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Keluar
+                </a>
+            </div>
+
+        </div>
+    </div>
 </aside>
+
+<script>
+(function () {
+    const trigger  = document.getElementById('profileTrigger');
+    const dropdown = document.getElementById('profileDropdown');
+
+    trigger.addEventListener('click', function (e) {
+        e.stopPropagation();
+        trigger.classList.toggle('is-open');
+        dropdown.classList.toggle('is-open');
+    });
+
+    document.addEventListener('click', function (e) {
+        if (!dropdown.contains(e.target) && !trigger.contains(e.target)) {
+            trigger.classList.remove('is-open');
+            dropdown.classList.remove('is-open');
+        }
+    });
+})();
+</script>

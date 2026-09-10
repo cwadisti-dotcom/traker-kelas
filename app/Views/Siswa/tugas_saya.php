@@ -5,95 +5,67 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tugas Saya</title>
 
-    <link rel="stylesheet" href="../assets/css/siswa.css">
-
+    <link rel="stylesheet" href="../assets/css/style.css">
     <link rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
 </head>
-<body>
+<body class="theme-siswa">
 
-<div class="container">
+<div class="wrapper">
 
     <?php include __DIR__ . '/sidebar.php'; ?>
 
-    <!-- MAIN -->
-    <main class="main-content">
+    <div class="main-content">
 
-        <div class="topbar">
+        <div class="content-box">
 
-            <div class="profile">
-                <div class="user-box">
+            <h1 class="page-title">Tugas Saya</h1>
+            <p class="page-subtitle">Daftar tugas yang harus dikerjakan.</p>
 
-                    <div class="user-icon">
-                        <i class="fa-solid fa-user"></i>
-                    </div>
+            <?php if (isset($_GET['berhasil'])): ?>
+                <script>
+                    alert('Jawaban berhasil dikirim');
+                </script>
+            <?php endif; ?>
 
-                    <span><?= htmlspecialchars($_SESSION['username']); ?></span>
+            <div class="task-grid">
 
-                </div>
-            </div>
+                <?php while($row = mysqli_fetch_assoc($tugas)): ?>
 
-        </div>
+                    <div class="task-card">
 
-        <div class="page-title">
-            <h1>Tugas Saya</h1>
-            <p>Daftar tugas yang harus dikerjakan.</p>
-        </div>
+                        <div class="task-card-top">
+                            <span class="mapel-tag">
+                                <?= !empty($row['nama_mapel']) ? htmlspecialchars($row['nama_mapel']) : '-'; ?>
+                            </span>
+                            <span class="badge progress">
+                                <?= htmlspecialchars($row['status']); ?>
+                            </span>
+                        </div>
 
-        <?php if (isset($_GET['berhasil'])): ?>
-            <script>
-                alert('Jawaban berhasil dikirim');
-            </script>
-        <?php endif; ?>
+                        <h3><?= htmlspecialchars($row['nama_tugas']); ?></h3>
 
-        <div class="task-grid">
+                        <div class="task-info">
+                            <p>
+                                <i class="fa-regular fa-clock"></i>
+                                <?= date('d M Y', strtotime($row['deadline'])); ?>
+                            </p>
+                        </div>
 
-            <?php while($row = mysqli_fetch_assoc($tugas)): ?>
-
-                <div class="task-card">
-
-                    <div class="task-card-top">
-
-                        <span class="mapel">
-                            <?= !empty($row['nama_mapel']) ? htmlspecialchars($row['nama_mapel']) : '-'; ?>
-                        </span>
-
-                        <span class="status progress">
-                            <?= htmlspecialchars($row['status']); ?>
-                        </span>
-
-                    </div>
-
-                    <h3><?= htmlspecialchars($row['nama_tugas']); ?></h3>
-
-                    <div class="task-info">
-
-                        <p>
-                            <i class="fa-regular fa-clock"></i>
-                            <?= date('d M Y', strtotime($row['deadline'])); ?>
-                        </p>
-
-                    </div>
-
-                    <div class="task-action">
-
-                        <a href="upload_tugas.php?id=<?= $row['id']; ?>"
-                        class="btn-upload">
-
+                        <a href="upload_tugas.php?id=<?= $row['id']; ?>" class="btn-primary">
+                            <i class="fa-solid fa-upload"></i>
                             Upload Jawaban
-
                         </a>
 
                     </div>
 
-                </div>
+                <?php endwhile; ?>
 
-            <?php endwhile; ?>
             </div>
 
         </div>
 
-    </main>
+    </div>
 
 </div>
 
