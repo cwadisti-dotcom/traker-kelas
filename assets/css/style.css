@@ -22,7 +22,7 @@
    Only :root tokens and the bare reset below are shared globally —
    everything else must sit under a body.theme-* block.
 
-   Migration status: guru ✅  |  auth ✅  |  admin/dashboard/siswa: pending
+   Migration status: guru ✅  |  auth ✅  |  siswa ✅  |  admin/dashboard: pending
    ================================================================= */
 
 /* -----------------------------------------------------------------
@@ -111,15 +111,14 @@
    -----------------------------------------------------------------
    Unscoped on purpose: the sidebar is app chrome, not per-section
    content, so it should look and behave identically everywhere.
-   Guru already uses this nav.nav > a.nav-item + profile-dropdown
-   markup (see app/Views/Guru/sidebar.php).
+   Guru and Siswa both use this nav.nav > a.nav-item + profile-dropdown
+   markup (see app/Views/Guru/sidebar.php and app/Views/Siswa/sidebar.php).
 
-   Admin and Siswa still render an OLDER ul.menu > li.active sidebar
-   (app/Views/admin/sidebar.php, inline in Siswa/index.php) styled
-   by admin.css / siswa.css — those files are not part of this
-   stylesheet yet, so there is no clash today. When admin/siswa
-   migrate, update their sidebar markup to this same nav-item
-   structure so they inherit this block for free instead of
+   Admin still renders an OLDER ul.menu > li.active sidebar
+   (app/Views/admin/sidebar.php) styled by admin.css — that file is
+   not part of this stylesheet yet, so there is no clash today. When
+   admin migrates, update its sidebar markup to this same nav-item
+   structure so it inherits this block for free instead of
    duplicating it.
    ================================================================= */
 
@@ -1219,6 +1218,473 @@ body.theme-auth .auth-switch a:hover{
 }
 
 /* =================================================================
-   SECTION: SISWA  (body.theme-siswa) — not migrated yet
-   Still served by assets/css/siswa.css.
+   SECTION: SISWA  (body.theme-siswa)
+   -----------------------------------------------------------------
+   Restyled from the old assets/css/siswa.css (TypeUI "Kinetic": navy
+   + Poppins) to TypeUI "Impeccable", reusing the same tokens and
+   page structure as the Guru section above (amber primary, cream
+   surfaces, Chakra Petch, .wrapper > sidebar + .main-content >
+   .content-box). Sidebar markup also switched over to the shared
+   nav.nav > a.nav-item + profile-dropdown structure (see
+   app/Views/Siswa/sidebar.php), so it's styled by the unscoped
+   SIDEBAR block above — nothing siswa-specific needed there anymore.
+   assets/css/siswa.css is no longer linked from any Siswa view.
    ================================================================= */
+
+body.theme-siswa{
+    background:var(--color-surface-base);
+    color:var(--color-text);
+}
+
+body.theme-siswa .wrapper{
+    display:flex;
+    padding:18px;
+}
+
+/* --- Main content --- */
+
+body.theme-siswa .main-content{
+    flex:1;
+    margin-left:264px;
+    width:calc(100% - 264px);
+}
+
+body.theme-siswa .content-box{
+    background:var(--color-surface-cream);
+    border:1px solid var(--color-border);
+    padding:28px;
+    min-height:95vh;
+    border-radius:var(--radius-lg);
+}
+
+/* --- Page title / header --- */
+
+body.theme-siswa .page-title{
+    font-size:var(--text-2xl);
+    font-weight:700;
+    color:var(--color-text);
+    margin-bottom:6px;
+    letter-spacing:-1px;
+}
+
+body.theme-siswa .page-subtitle{
+    color:var(--color-text-muted);
+    margin-bottom:32px;
+    font-size:var(--text-sm);
+}
+
+body.theme-siswa .page-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    margin-bottom:32px;
+}
+
+body.theme-siswa .page-header .page-title,
+body.theme-siswa .page-header .page-subtitle{
+    margin-bottom:0;
+}
+
+body.theme-siswa .btn-primary{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    background:var(--color-primary);
+    color:var(--color-surface-inverse);
+    border:none;
+    padding:12px 18px;
+    border-radius:var(--radius-sm);
+    font-weight:700;
+    font-size:var(--text-xs);
+    font-family:var(--font-primary);
+    text-decoration:none;
+    cursor:pointer;
+    transition:background var(--transition-fast);
+    white-space:nowrap;
+}
+
+body.theme-siswa .btn-primary:hover{
+    background:var(--color-primary-hover);
+}
+
+/* --- Stats grid (dashboard cards) --- */
+
+body.theme-siswa .stats-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:12px;
+    margin-bottom:28px;
+}
+
+body.theme-siswa .stat-card{
+    background:var(--color-surface);
+    border:1px solid var(--color-border);
+    border-radius:var(--radius-md);
+    padding:20px;
+}
+
+body.theme-siswa .stat-icon{
+    width:42px;
+    height:42px;
+    border-radius:var(--radius-md);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:var(--color-surface);
+    font-size:16px;
+    margin-bottom:14px;
+}
+
+body.theme-siswa .bg-yellow{ background:var(--color-primary); }
+body.theme-siswa .bg-green { background:var(--color-success); }
+body.theme-siswa .bg-blue  { background:var(--color-info); }
+body.theme-siswa .bg-red   { background:var(--color-secondary); }
+
+body.theme-siswa .stat-card h2{
+    font-size:36px;
+    margin-bottom:4px;
+    color:var(--color-text);
+    font-weight:700;
+    letter-spacing:-1px;
+}
+
+body.theme-siswa .stat-card h3{
+    font-size:var(--text-sm);
+    margin-bottom:4px;
+    color:var(--color-text);
+    font-weight:600;
+}
+
+body.theme-siswa .stat-card p{
+    color:var(--color-text-muted);
+    font-size:11px;
+}
+
+/* --- Table (dashboard "tugas terdekat", nilai) --- */
+
+body.theme-siswa .table-box{
+    background:var(--color-surface);
+    border:1px solid var(--color-border);
+    border-radius:var(--radius-sm);
+    padding:18px;
+    margin-top:18px;
+    overflow:auto;
+}
+
+body.theme-siswa table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+body.theme-siswa thead th{
+    padding:12px 14px;
+    text-align:left;
+    color:var(--color-text-muted);
+    font-size:10px;
+    font-weight:600;
+    letter-spacing:1.5px;
+    text-transform:uppercase;
+    border-bottom:2px solid var(--color-border);
+}
+
+body.theme-siswa tbody td{
+    padding:12px 14px;
+    border-bottom:1px solid var(--color-border-soft);
+    color:var(--color-text);
+    font-size:var(--text-xs);
+}
+
+body.theme-siswa tbody tr:last-child td{
+    border-bottom:none;
+}
+
+/* --- Status badges --- */
+
+body.theme-siswa .badge{
+    display:inline-block;
+    padding:5px 12px;
+    border-radius:30px;
+    font-size:11px;
+    font-weight:600;
+}
+
+body.theme-siswa .badge-warning{
+    background:var(--color-warning-tint);
+    color:var(--color-warning);
+}
+
+body.theme-siswa .badge-success{
+    background:var(--color-success-tint);
+    color:var(--color-success);
+}
+
+body.theme-siswa .badge.progress{
+    background:var(--color-info-tint);
+    color:var(--color-info);
+}
+
+/* --- Section heading (Jadwal, Tugas Terdekat, ...) --- */
+
+body.theme-siswa .section-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin:32px 0 16px;
+}
+
+body.theme-siswa .section-header h2{
+    font-size:var(--text-lg);
+    font-weight:700;
+    color:var(--color-text);
+}
+
+body.theme-siswa .section-header a{
+    color:var(--color-primary);
+    font-weight:600;
+    font-size:var(--text-xs);
+    text-decoration:none;
+}
+
+body.theme-siswa .section-header a:hover{
+    color:var(--color-primary-hover);
+}
+
+body.theme-siswa .section-tag{
+    background:var(--color-surface-inverse);
+    color:var(--color-text-inverse);
+    padding:8px 14px;
+    border-radius:var(--radius-sm);
+    font-size:11px;
+    font-weight:600;
+}
+
+/* --- Tugas Saya: task cards --- */
+
+body.theme-siswa .task-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+    gap:16px;
+}
+
+body.theme-siswa .task-card{
+    background:var(--color-surface);
+    border:1px solid var(--color-border);
+    border-radius:var(--radius-md);
+    padding:22px;
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+}
+
+body.theme-siswa .task-card-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+body.theme-siswa .mapel-tag{
+    background:var(--color-surface-muted);
+    color:var(--color-text-muted);
+    padding:6px 12px;
+    border-radius:var(--radius-sm);
+    font-size:11px;
+    font-weight:600;
+    border:1px solid var(--color-border);
+}
+
+body.theme-siswa .task-card h3{
+    font-size:var(--text-lg);
+    font-weight:700;
+    color:var(--color-text);
+}
+
+body.theme-siswa .task-info p{
+    color:var(--color-text-muted);
+    font-size:var(--text-xs);
+    margin-bottom:4px;
+}
+
+body.theme-siswa .task-info i{
+    margin-right:6px;
+    width:14px;
+    text-align:center;
+}
+
+/* --- Jadwal Pelajaran (weekly schedule) --- */
+
+body.theme-siswa .jadwal-table{
+    background:var(--color-surface);
+    border:1px solid var(--color-border);
+    border-radius:var(--radius-sm);
+    padding:18px;
+    overflow:auto;
+    margin-top:18px;
+}
+
+body.theme-siswa .jadwal-table table{
+    width:100%;
+    border-collapse:separate;
+    border-spacing:6px;
+}
+
+body.theme-siswa .jadwal-table th{
+    background:var(--color-surface-inverse);
+    color:var(--color-text-inverse);
+    padding:12px;
+    border-radius:var(--radius-sm);
+    font-size:11px;
+    font-weight:600;
+    text-transform:uppercase;
+    letter-spacing:1px;
+}
+
+body.theme-siswa .jadwal-table td{
+    padding:14px;
+    text-align:center;
+    border-radius:var(--radius-sm);
+    font-weight:600;
+    font-size:12px;
+    min-width:110px;
+}
+
+body.theme-siswa .jadwal-table .istirahat{
+    background:var(--color-surface-inverse);
+    color:var(--color-text-inverse);
+    font-weight:700;
+    letter-spacing:1.5px;
+}
+
+/* Subject color tags — decorative only, not tied to semantic tokens */
+body.theme-siswa .soft-purple{ background:#EFE4FB; color:#6B3FA0; }
+body.theme-siswa .soft-gray  { background:var(--color-surface-muted); color:var(--color-text-muted); }
+body.theme-siswa .soft-green { background:var(--color-success-tint); color:var(--color-success); }
+body.theme-siswa .soft-green2{ background:#E1F2E4; color:#1E7D42; }
+body.theme-siswa .soft-green3{ background:#DDEEDF; color:#1B6B37; }
+body.theme-siswa .soft-blue  { background:var(--color-info-tint); color:var(--color-info); }
+body.theme-siswa .soft-pink  { background:#F1E2FA; color:#8E44AD; }
+body.theme-siswa .soft-pink2 { background:#EAD7F8; color:#7D3C98; }
+body.theme-siswa .soft-yellow{ background:var(--color-primary-tint); color:var(--color-primary); }
+body.theme-siswa .soft-yellow2{ background:#F8EFCF; color:#A66E00; }
+body.theme-siswa .soft-lime  { background:#EBF7D3; color:#5C8700; }
+body.theme-siswa .soft-olive { background:#ECE8C7; color:#7A7500; }
+body.theme-siswa .soft-mint  { background:#DFF5EA; color:#25764C; }
+
+/* --- Form (upload jawaban) --- */
+
+body.theme-siswa .form-box{
+    width:100%;
+    max-width:650px;
+    background:var(--color-surface-muted);
+    border:1px solid var(--color-border);
+    border-radius:var(--radius-md);
+    padding:28px;
+}
+
+body.theme-siswa .form-intro{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    margin-bottom:24px;
+    padding-bottom:20px;
+    border-bottom:1px solid var(--color-border);
+}
+
+body.theme-siswa .form-intro .icon-circle{
+    width:46px;
+    height:46px;
+    border-radius:var(--radius-md);
+    background:var(--color-primary);
+    color:var(--color-surface-inverse);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:18px;
+    flex-shrink:0;
+}
+
+body.theme-siswa .form-intro h2{
+    font-size:var(--text-lg);
+    font-weight:700;
+    color:var(--color-text);
+    margin-bottom:2px;
+}
+
+body.theme-siswa .form-intro p{
+    color:var(--color-text-muted);
+    font-size:var(--text-xs);
+}
+
+body.theme-siswa .form-group{
+    margin-bottom:18px;
+}
+
+body.theme-siswa .form-group label{
+    display:block;
+    margin-bottom:6px;
+    font-weight:600;
+    color:var(--color-text-muted);
+    font-size:10px;
+    letter-spacing:1px;
+    text-transform:uppercase;
+}
+
+body.theme-siswa .form-input,
+body.theme-siswa .form-textarea,
+body.theme-siswa .form-file,
+body.theme-siswa select{
+    width:100%;
+    padding:10px 12px;
+    border-radius:var(--radius-sm);
+    border:1px solid var(--color-border);
+    background:var(--color-surface);
+    color:var(--color-text);
+    outline:none;
+    font-family:var(--font-primary);
+    font-size:var(--text-xs);
+    transition:border-color var(--transition-fast);
+}
+
+body.theme-siswa .form-input:focus,
+body.theme-siswa .form-textarea:focus,
+body.theme-siswa .form-file:focus,
+body.theme-siswa select:focus{
+    border-color:var(--color-primary);
+    box-shadow:0 0 0 2px rgba(204,136,0,0.22);
+}
+
+body.theme-siswa .form-textarea{
+    resize:none;
+    height:120px;
+}
+
+body.theme-siswa .submit-btn{
+    width:100%;
+    padding:12px;
+    border:none;
+    border-radius:var(--radius-sm);
+    background:var(--color-primary);
+    color:var(--color-surface-inverse);
+    font-size:13px;
+    font-weight:700;
+    cursor:pointer;
+    transition:background var(--transition-fast);
+    font-family:var(--font-primary);
+}
+
+body.theme-siswa .submit-btn:hover{
+    background:var(--color-primary-hover);
+}
+
+/* --- Responsive --- */
+
+@media (max-width:1300px){
+    body.theme-siswa .stats-grid{ grid-template-columns:repeat(2,1fr); }
+}
+
+@media (max-width:900px){
+    body.theme-siswa .main-content{
+        margin-left:0;
+        width:100%;
+    }
+    body.theme-siswa .stats-grid{ grid-template-columns:1fr; }
+}

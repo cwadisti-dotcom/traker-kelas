@@ -1,148 +1,82 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Upload Jawaban</title>
 
-    <!-- CSS -->
-    <link rel="stylesheet" href="../assets/css/siswa.css">
-
-    <!-- ICON -->
+    <link rel="stylesheet" href="../assets/css/style.css">
     <link rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
-
 </head>
-<body>
+<body class="theme-siswa">
 
-<div class="container">
+<div class="wrapper">
 
     <?php include __DIR__ . '/sidebar.php'; ?>
 
-    <!-- MAIN -->
+    <div class="main-content">
 
-    <main class="main-content">
+        <div class="content-box">
 
-        <!-- TOPBAR -->
+            <h1 class="page-title">Upload Jawaban</h1>
+            <p class="page-subtitle">Upload file tugas yang sudah kamu kerjakan.</p>
 
-        <div class="topbar">
+            <form action="" method="POST" enctype="multipart/form-data">
 
-            <div class="profile">
+                <div class="form-box">
 
-                <div class="user-box">
-
-                    <div class="user-icon">
-                        <i class="fa-solid fa-user"></i>
+                    <div class="form-intro">
+                        <div class="icon-circle">
+                            <i class="fa-solid fa-cloud-arrow-up"></i>
+                        </div>
+                        <div>
+                            <h2>Upload Tugas</h2>
+                            <p>Pastikan file sesuai format yang ditentukan guru.</p>
+                        </div>
                     </div>
 
-                    <span><?= htmlspecialchars($_SESSION['username']); ?></span>
+                    <div class="form-group">
+                        <label>Pilih Tugas</label>
+                        <select name="tugas_id" class="form-input" required>
+                            <option value="">-- Pilih Tugas --</option>
 
-                </div>
-
-            </div>
-
-        </div>
-
-        <!-- TITLE -->
-
-        <div class="page-title">
-
-            <h1>Upload Jawaban</h1>
-
-            <p>
-                Upload file tugas yang sudah kamu kerjakan.
-            </p>
-
-        </div>
-
-        <!-- FORM -->
-
-        <div class="upload-wrapper">
-
-            <form action="" method="POST"
-            enctype="multipart/form-data"
-            class="upload-form">
-
-                <div class="upload-card">
-
-                    <div class="upload-icon">
-                        <i class="fa-solid fa-cloud-arrow-up"></i>
+                            <?php while($row = mysqli_fetch_assoc($tugasList)): ?>
+                                <option
+                                    value="<?= $row['id']; ?>"
+                                    <?= isset($_GET['id']) && $_GET['id'] == $row['id'] ? 'selected' : ''; ?>
+                                >
+                                    <?= htmlspecialchars($row['nama_tugas']); ?>
+                                </option>
+                            <?php endwhile; ?>
+                        </select>
                     </div>
 
-                    <h2>Upload Tugas </h2>
+                    <div class="form-group">
+                        <label>Catatan</label>
+                        <textarea
+                            name="catatan"
+                            class="form-textarea"
+                            placeholder="Tambahkan catatan untuk guru..."></textarea>
+                    </div>
 
-                    <p>
-                        Pastikan file sesuai format yang ditentukan guru.
-                    </p>
+                    <div class="form-group">
+                        <label>Upload File</label>
+                        <input type="file" name="file" class="form-file">
+                    </div>
 
-                </div>
-
-                <!-- SELECT TUGAS -->
-
-                <div class="form-group">
-
-                    <label>Pilih Tugas</label>
-
-                    <select name="tugas_id" required>
-
-                    <option value="">
-                        -- Pilih Tugas --
-                    </option>
-
-                    <?php while($row = mysqli_fetch_assoc($tugasList)): ?>
-
-                    <option
-                        value="<?= $row['id']; ?>"
-                        <?= isset($_GET['id']) && $_GET['id'] == $row['id'] ? 'selected' : ''; ?>
-                    >
-                        <?= htmlspecialchars($row['nama_tugas']); ?>
-                    </option>
-
-                    <?php endwhile; ?>
-
-                    </select>
+                    <button type="submit" name="upload" class="submit-btn">
+                        <i class="fa-solid fa-paper-plane"></i>
+                        Kirim Jawaban
+                    </button>
 
                 </div>
-
-                <!-- CATATAN -->
-
-                <div class="form-group">
-
-                    <label>Catatan</label>
-
-                    <textarea
-                    name="catatan"
-                    placeholder="Tambahkan catatan untuk guru..."></textarea>
-
-                </div>
-
-                <!-- FILE -->
-
-                <div class="form-group">
-
-                    <label>Upload File</label>
-
-                    <input type="file" name="file">
-
-                </div>
-
-                <!-- BUTTON -->
-
-                <button type="submit" name="upload" class="btn-submit">
-
-                    <i class="fa-solid fa-paper-plane"></i>
-
-                    Kirim Jawaban
-
-                </button>
 
             </form>
 
         </div>
 
-    </main>
+    </div>
 
 </div>
 
