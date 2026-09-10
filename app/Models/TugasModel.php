@@ -75,17 +75,23 @@ class TugasModel
         return mysqli_fetch_assoc($query)['total'];
     }
 
-    public function getById($id)
-    {
-        $id = (int) $id;
+  public function getById($id)
+{
+    $id = (int) $id;
 
-        $query = mysqli_query(
-            $this->koneksi,
-            "SELECT * FROM tugas WHERE id='$id'"
-        );
+    $query = mysqli_query(
+        $this->koneksi,
+        "SELECT
+            tugas.*,
+            mapel.nama_mapel
+         FROM tugas
+         LEFT JOIN mapel
+            ON tugas.mapel_id = mapel.id
+         WHERE tugas.id='$id'"
+    );
 
-        return mysqli_fetch_assoc($query);
-    }
+    return mysqli_fetch_assoc($query);
+}
 
     public function update(
         $id,

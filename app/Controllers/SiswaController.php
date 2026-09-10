@@ -47,6 +47,16 @@ public function __construct($koneksi)
             'tugas' => $this->tugasModel->getBelumDikumpulkan($siswa_id)
         ];
     }
+    public function detailTugas()
+{
+    $id = $_GET['id'] ?? 0;
+
+    $tugas = $this->tugasModel->getById($id);
+
+    return [
+        'tugas' => $tugas
+    ];
+}
 
 public function nilai()
 {

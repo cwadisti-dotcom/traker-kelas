@@ -19,10 +19,11 @@ $siswa_username  = $_SESSION['username'] ?? 'Siswa';
                 <i class="fas fa-table-columns"></i>
                 Dashboard
             </a>
-            <a href="tugas_saya.php" class="nav-item <?= $current_page == 'tugas_saya.php' || $current_page == 'upload_tugas.php' ? 'is-active' : '' ?>">
-                <i class="fas fa-clipboard"></i>
-                Tugas Saya
-            </a>
+         <a href="tugas_saya.php"
+   class="nav-item <?= in_array(basename($_SERVER['PHP_SELF']), ['tugas_saya.php', 'detail_tugas.php']) ? 'is-active' : ''; ?>">
+    <i class="fa-solid fa-clipboard"></i>
+    Tugas Saya
+</a>
             <a href="nilai.php" class="nav-item <?= $current_page == 'nilai.php' ? 'is-active' : '' ?>">
                 <i class="fas fa-chart-column"></i>
                 Nilai
