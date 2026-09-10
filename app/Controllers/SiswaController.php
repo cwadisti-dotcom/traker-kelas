@@ -8,11 +8,14 @@ class SiswaController
     private $tugasModel;
     private $pengumpulanModel;
 
-    public function __construct($koneksi)
-    {
-        $this->tugasModel = new TugasModel($koneksi);
-        $this->pengumpulanModel = new PengumpulanModel($koneksi);
-    }
+   private $koneksi;
+
+public function __construct($koneksi)
+{
+    $this->koneksi = $koneksi;
+    $this->tugasModel = new TugasModel($koneksi);
+    $this->pengumpulanModel = new PengumpulanModel($koneksi);
+}
 
     public function dashboard()
     {
@@ -45,14 +48,34 @@ class SiswaController
         ];
     }
 
-    public function nilai()
-    {
-        $siswa_id = $_SESSION['id'] ?? null;
+public function nilai()
+{
+    $siswa_id = $_SESSION['id'] ?? null;
 
-        return [
-            'riwayat' => $this->pengumpulanModel->getRiwayatBySiswa($siswa_id)
-        ];
+    $filter_mapel  = $_GET['mapel_id'] ?? '';
+    $filter_status = $_GET['status'] ?? '';
+    $filter_awal   = $_GET['tanggal_awal'] ?? '';
+    $filter_akhir  = $_GET['tanggal_akhir'] ?? '';
+
+    $mapelList = [];
+    $query_mapel = mysqli_query($this->koneksi, "SELECT id, nama_mapel FROM mapel ORDER BY nama_mapel ASC");
+    if ($query_mapel) {
+        while ($m = mysqli_fetch_assoc($query_mapel)) {
+            $mapelList[] = $m;
+        }
     }
+
+    return [
+        'riwayat' => $this->pengumpulanModel->getRiwayatBySiswa(
+            $siswa_id, $filter_mapel, $filter_status, $filter_awal, $filter_akhir
+        ),
+        'mapelList'     => $mapelList,
+        'filter_mapel'  => $filter_mapel,
+        'filter_status' => $filter_status,
+        'filter_awal'   => $filter_awal,
+        'filter_akhir'  => $filter_akhir,
+    ];
+}
 
     public function uploadTugas()
     {

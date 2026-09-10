@@ -7,6 +7,7 @@ include __DIR__.'/../Models/PengumpulanModel.php';
 include __DIR__.'/../Models/UserModel.php';
 include __DIR__.'/../Models/MapelModel.php';
 include __DIR__.'/../Models/MateriModel.php';
+include __DIR__.'/../Models/LaporanModel.php';
 
 
 class GuruController
@@ -16,6 +17,7 @@ class GuruController
     private $userModel;
     private $mapelModel;
     private $materiModel;
+    private $laporanModel;
 
     public function __construct($koneksi)
     {
@@ -24,6 +26,7 @@ class GuruController
         $this->userModel = new UserModel($koneksi);
         $this->mapelModel = new MapelModel($koneksi);
         $this->materiModel = new MateriModel($koneksi);
+        $this->laporanModel = new LaporanModel($koneksi);
     }
 
     public function dashboard()
@@ -267,16 +270,6 @@ class GuruController
         ];
     }
 
-    public function nilai()
-    {
-        return [
-            'sudahDinilai' => $this->pengumpulanModel->getTotalDinilai(),
-            'belumDinilai' => $this->pengumpulanModel->getTotalBelumDinilai(),
-            'jawabanMasuk' => $this->pengumpulanModel->getTotal(),
-            'totalSiswa'   => $this->userModel->getTotalSiswa(),
-            'pengumpulan'  => $this->pengumpulanModel->getAllWithTugas()
-        ];
-    }
 
     public function simpanNilai()
     {
@@ -291,4 +284,24 @@ class GuruController
             exit;
         }
     }
+    public function laporan()
+{
+    $mapel_id      = $_GET['mapel_id'] ?? null;
+    $status        = $_GET['status'] ?? null;
+    $tanggal_awal  = $_GET['tanggal_awal'] ?? null;
+    $tanggal_akhir = $_GET['tanggal_akhir'] ?? null;
+
+    $rekap = $this->laporanModel->getRekapNilai(
+        $mapel_id, $status, $tanggal_awal, $tanggal_akhir
+    );
+
+    return [
+        'rekap'         => $rekap,
+        'mapelList'     => $this->mapelModel->getAll(),
+        'filter_mapel'  => $mapel_id,
+        'filter_status' => $status,
+        'filter_awal'   => $tanggal_awal,
+        'filter_akhir'  => $tanggal_akhir
+    ];
+}   
 }
