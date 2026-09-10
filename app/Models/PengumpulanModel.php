@@ -139,15 +139,14 @@ class PengumpulanModel
         return mysqli_fetch_assoc($query)['total'];
     }
 
-    public function getRiwayatBySiswa($siswa_id)
-    {
-        $siswa_id = (int) $siswa_id;
+   public function getRiwayatBySiswa($siswa_id, $mapel_id = '', $status = '', $tanggal_awal = '', $tanggal_akhir = '')
+{
+    $siswa_id = (int) $siswa_id;
 
-        return mysqli_query(
-            $this->koneksi,
-            "SELECT
+    $sql = "SELECT
                 pengumpulan_tugas.nilai,
                 pengumpulan_tugas.status,
+                pengumpulan_tugas.tanggal_upload,
                 tugas.nama_tugas,
                 mapel.nama_mapel
              FROM pengumpulan_tugas
@@ -155,10 +154,32 @@ class PengumpulanModel
                 ON tugas.id = pengumpulan_tugas.tugas_id
              LEFT JOIN mapel
                 ON tugas.mapel_id = mapel.id
-             WHERE pengumpulan_tugas.siswa_id = '$siswa_id'
-             ORDER BY pengumpulan_tugas.id DESC"
-        );
+             WHERE pengumpulan_tugas.siswa_id = '$siswa_id'";
+
+    if ($mapel_id !== '') {
+        $mapel_id = (int) $mapel_id;
+        $sql .= " AND tugas.mapel_id = '$mapel_id'";
     }
+
+    if ($status !== '') {
+        $status = mysqli_real_escape_string($this->koneksi, $status);
+        $sql .= " AND pengumpulan_tugas.status = '$status'";
+    }
+
+    if ($tanggal_awal !== '') {
+        $tanggal_awal = mysqli_real_escape_string($this->koneksi, $tanggal_awal);
+        $sql .= " AND DATE(pengumpulan_tugas.tanggal_upload) >= '$tanggal_awal'";
+    }
+
+    if ($tanggal_akhir !== '') {
+        $tanggal_akhir = mysqli_real_escape_string($this->koneksi, $tanggal_akhir);
+        $sql .= " AND DATE(pengumpulan_tugas.tanggal_upload) <= '$tanggal_akhir'";
+    }
+
+    $sql .= " ORDER BY pengumpulan_tugas.id DESC";
+
+    return mysqli_query($this->koneksi, $sql);
+}
 
     public function simpan($tugas_id, $siswa_id, $catatan, $file_jawaban)
     {

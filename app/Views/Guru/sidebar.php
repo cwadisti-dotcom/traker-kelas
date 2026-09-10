@@ -35,10 +35,12 @@ $guru_username = $_SESSION['username'] ?? 'Guru';
                 <i class="fas fa-list-check"></i>
                 Tugas
             </a>
-            <a href="nilai.php" class="nav-item <?= $current_page == 'nilai.php' ? 'is-active' : '' ?>">
-                <i class="fas fa-star"></i>
-                Input Nilai
-            </a>
+           
+
+            <a href="laporan.php" class="nav-item <?= $current_page == 'laporan.php' ? 'is-active' : '' ?>">
+    <i class="fas fa-file-invoice"></i>
+    Laporan
+</a>
         </nav>
     </div>
 
