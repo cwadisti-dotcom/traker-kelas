@@ -1,52 +1,3 @@
-<?php
-include '../config/koneksi.php';
-
-if(isset($_POST['upload'])){
-
-    $tugas_id = $_POST['tugas_id'];
-    $catatan  = $_POST['catatan'];
-
-    $namaFile = $_FILES['file']['name'];
-    $tmpFile  = $_FILES['file']['tmp_name'];
-
-    move_uploaded_file(
-        $tmpFile,
-        "../uploads/jawaban/" . $namaFile
-    );
-
-    $query = mysqli_query(
-    $koneksi,
-    "INSERT INTO pengumpulan_tugas
-    (
-        tugas_id,
-        siswa,
-        jawaban,
-        file_jawaban
-    )
-    VALUES
-    (
-        '$tugas_id',
-        'siswa1',
-        '$catatan',
-        '$namaFile'
-    )"
-    );
-
-    if($query){
-        echo "INSERT BERHASIL";
-    }else{
-        die(mysqli_error($koneksi));
-    }
-
-    echo "
-    <script>
-        alert('Jawaban berhasil dikirim');
-        window.location='tugas_saya.php';
-    </script>
-    ";
-}
-?>
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -68,66 +19,7 @@ if(isset($_POST['upload'])){
 
 <div class="container">
 
-    <!-- SIDEBAR -->
-
-    <aside class="sidebar">
-
-        <div class="sidebar-top">
-
-            <div class="logo">
-                <h2>DeadlineHub</h2>
-            </div>
-
-            <div class="menu-title">
-                SISWA
-            </div>
-
-            <ul class="menu">
-
-                <li>
-                    <a href="index.php">
-                        <i class="fa-solid fa-table-columns"></i>
-                        Dashboard
-                    </a>
-                </li>
-
-                <li>
-                    <a href="tugas_saya.php">
-                        <i class="fa-regular fa-clipboard"></i>
-                        Tugas Saya
-                    </a>
-                </li>
-
-                <li class="active">
-                    <a href="upload_tugas.php">
-                        <i class="fa-solid fa-upload"></i>
-                      Upload Jawaban siswa
-                    </a>
-                </li>
-
-                <li>
-                    <a href="nilai.php">
-                        <i class="fa-solid fa-chart-column"></i>
-                        Nilai
-                    </a>
-                </li>
-
-            </ul>
-
-        </div>
-
-        <ul class="menu">
-
-            <li class="logout">
-                <a href="../auth/logout.php">
-                    <i class="fa-solid fa-right-from-bracket"></i>
-                    Logout
-                </a>
-            </li>
-
-        </ul>
-
-    </aside>
+    <?php include __DIR__ . '/sidebar.php'; ?>
 
     <!-- MAIN -->
 
@@ -136,7 +28,7 @@ if(isset($_POST['upload'])){
         <!-- TOPBAR -->
 
         <div class="topbar">
-            
+
             <div class="profile">
 
                 <div class="user-box">
@@ -145,7 +37,7 @@ if(isset($_POST['upload'])){
                         <i class="fa-solid fa-user"></i>
                     </div>
 
-                    <span>Siswa</span>
+                    <span><?= htmlspecialchars($_SESSION['username']); ?></span>
 
                 </div>
 
@@ -199,19 +91,13 @@ if(isset($_POST['upload'])){
                         -- Pilih Tugas --
                     </option>
 
-                    <?php
+                    <?php while($row = mysqli_fetch_assoc($tugasList)): ?>
 
-                    $tugas = mysqli_query(
-                        $koneksi,
-                        "SELECT * FROM tugas ORDER BY deadline ASC"
-                    );
-
-                    while($row = mysqli_fetch_assoc($tugas)):
-
-                    ?>
-
-                    <option value="<?= $row['id']; ?>">
-                        <?= $row['nama_tugas']; ?>
+                    <option
+                        value="<?= $row['id']; ?>"
+                        <?= isset($_GET['id']) && $_GET['id'] == $row['id'] ? 'selected' : ''; ?>
+                    >
+                        <?= htmlspecialchars($row['nama_tugas']); ?>
                     </option>
 
                     <?php endwhile; ?>

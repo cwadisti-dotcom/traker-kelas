@@ -118,4 +118,63 @@ class TugasModel
             "DELETE FROM tugas WHERE id='$id'"
         );
     }
+
+    public function getDashboardSiswa($siswa_id, $limit = 5)
+    {
+        $siswa_id = (int) $siswa_id;
+        $limit    = (int) $limit;
+
+        return mysqli_query(
+            $this->koneksi,
+            "SELECT
+                tugas.*,
+                mapel.nama_mapel,
+                COALESCE(pengumpulan_tugas.status, 'Belum Upload') AS status_siswa
+             FROM tugas
+             LEFT JOIN mapel
+                ON tugas.mapel_id = mapel.id
+             LEFT JOIN pengumpulan_tugas
+                ON tugas.id = pengumpulan_tugas.tugas_id
+                AND pengumpulan_tugas.siswa_id = '$siswa_id'
+             ORDER BY tugas.deadline ASC
+             LIMIT $limit"
+        );
+    }
+
+    public function getBelumDikumpulkan($siswa_id)
+    {
+        $siswa_id = (int) $siswa_id;
+
+        return mysqli_query(
+            $this->koneksi,
+            "SELECT tugas.*, mapel.nama_mapel
+             FROM tugas
+             LEFT JOIN mapel
+                ON tugas.mapel_id = mapel.id
+             WHERE tugas.id NOT IN (
+                SELECT tugas_id
+                FROM pengumpulan_tugas
+                WHERE siswa_id = '$siswa_id'
+             )
+             ORDER BY tugas.deadline ASC"
+        );
+    }
+
+    public function getTotalTerlambat($siswa_id)
+    {
+        $siswa_id = (int) $siswa_id;
+
+        $query = mysqli_query(
+            $this->koneksi,
+            "SELECT COUNT(*) as total
+             FROM tugas
+             LEFT JOIN pengumpulan_tugas
+                ON tugas.id = pengumpulan_tugas.tugas_id
+                AND pengumpulan_tugas.siswa_id = '$siswa_id'
+             WHERE tugas.deadline < CURDATE()
+             AND pengumpulan_tugas.id IS NULL"
+        );
+
+        return mysqli_fetch_assoc($query)['total'];
+    }
 }
