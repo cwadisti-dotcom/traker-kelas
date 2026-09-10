@@ -1,8 +1,3 @@
-<?php
-include '../config/koneksi.php';
-$current_page = basename($_SERVER['PHP_SELF']);
-?>
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -19,65 +14,12 @@ $current_page = basename($_SERVER['PHP_SELF']);
 
 <div class="container">
 
-    <!-- SIDEBAR -->
-     <aside class="sidebar">
-
-        <div class="sidebar-top">
-
-            <div class="logo">
-                <h2>DeadlineHub</h2>
-            </div>
-
-            <div class="menu-title">
-                SISWA
-            </div>
-
-            <ul class="menu">
-
-                <!-- DASHBOARD -->
-                <li class="<?= $current_page == 'index.php' ? 'active' : '' ?>">
-                    <a href="index.php">
-                        <i class="fa-solid fa-table-columns"></i>
-                        Dashboard
-                    </a>
-                </li>
-
-                <li class="<?= $current_page == 'tugas_saya.php' ? 'active' : '' ?>">
-                    <a href="tugas_saya.php">
-                        <i class="fa-regular fa-clipboard"></i>
-                        Tugas Saya
-                    </a>
-                </li>
-
-                <li class="<?= $current_page == 'nilai.php' ? 'active' : '' ?>">
-                    <a href="nilai.php">
-                        <i class="fa-solid fa-chart-column"></i>
-                        Nilai
-                    </a>
-                </li>
-
-            </ul>
-
-        </div>
-
-        <ul class="menu">
-
-            <li class="logout">
-                <a href="../auth/logout.php">
-                    <i class="fa-solid fa-right-from-bracket"></i>
-                    Logout
-                </a>
-            </li>
-
-        </ul>
-
-    </aside>
+    <?php include __DIR__ . '/sidebar.php'; ?>
 
     <!-- MAIN -->
     <main class="main-content">
 
         <div class="topbar">
-
             <div class="profile">
 
                 <div class="user-box">
@@ -86,7 +28,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
                         <i class="fa-solid fa-user"></i>
                     </div>
 
-                    <span>Siswa</span>
+                    <span><?= htmlspecialchars($_SESSION['username']); ?></span>
 
                 </div>
 
@@ -114,35 +56,15 @@ $current_page = basename($_SERVER['PHP_SELF']);
 
                 <tbody>
 
-                <?php
-
-                $siswa = "siswa1";
-
-                $query = mysqli_query(
-                    $koneksi,
-                    "SELECT
-                        pengumpulan_tugas.nilai,
-                        pengumpulan_tugas.status,
-                        tugas.nama_tugas,
-                        tugas.mapel
-                    FROM pengumpulan_tugas
-                    JOIN tugas
-                        ON tugas.id = pengumpulan_tugas.tugas_id
-                    WHERE pengumpulan_tugas.siswa = '$siswa'
-                    ORDER BY pengumpulan_tugas.id DESC"
-                );
-
-                while($row = mysqli_fetch_assoc($query)):
-
-                ?>
+                <?php while($row = mysqli_fetch_assoc($riwayat)): ?>
 
                 <tr>
 
-                    <td><?= $row['nama_tugas']; ?></td>
+                    <td><?= htmlspecialchars($row['nama_tugas']); ?></td>
 
                     <td>
-                        <?= !empty($row['mapel'])
-                            ? $row['mapel']
+                        <?= !empty($row['nama_mapel'])
+                            ? htmlspecialchars($row['nama_mapel'])
                             : '-'; ?>
                     </td>
 

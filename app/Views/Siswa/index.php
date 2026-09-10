@@ -1,61 +1,9 @@
-<?php
-include '../config/koneksi.php';
-
-$siswa = 'siswa1';
-
-$totalTugas = mysqli_num_rows(
-    mysqli_query($koneksi,"SELECT * FROM tugas")
-);
-
-$tugasTerdekat = mysqli_query(
-    $koneksi,
-    "SELECT
-        t.*,
-        COALESCE(p.status,'Belum Upload') as status_siswa
-    FROM tugas t
-    LEFT JOIN pengumpulan_tugas p
-        ON t.id = p.tugas_id
-        AND p.siswa = '$siswa'
-    ORDER BY t.deadline ASC
-    LIMIT 10"
-);
-
-$tugasSelesai = mysqli_num_rows(
-    mysqli_query(
-        $koneksi,
-        "SELECT *
-        FROM pengumpulan_tugas
-        WHERE siswa='$siswa'
-        AND status='Sudah Dinilai'"
-    )
-);
-
-$belumSelesai = $totalTugas - $tugasSelesai;
-
-if($belumSelesai < 0){
-    $belumSelesai = 0;
-}
-
-$terlambat = mysqli_num_rows(
-    mysqli_query(
-        $koneksi,
-        "SELECT t.*
-        FROM tugas t
-        LEFT JOIN pengumpulan_tugas p
-            ON t.id = p.tugas_id
-            AND p.siswa='$siswa'
-        WHERE t.deadline < CURDATE()
-        AND p.id IS NULL"
-    )
-);
-?>
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Siswa - DeadlineHub</title>
+    <title>Halaman Siswa - DeadlineHub</title>
 
     <!-- CSS -->
     <link rel="stylesheet" href="../assets/css/siswa.css">
@@ -68,67 +16,13 @@ $terlambat = mysqli_num_rows(
 
 <div class="container">
 
-    <!-- SIDEBAR -->
-
-   <?php
-    $current_page = basename($_SERVER['PHP_SELF']);
-    ?>
-
-    <aside class="sidebar">
-
-        <div class="sidebar-top">
-
-            <div class="logo">
-                <h2>DeadlineHub</h2>
-            </div>
-
-            <div class="menu-title">SISWA</div>
-
-            <ul class="menu">
-
-                <li class="<?= $current_page == 'index.php' ? 'active' : '' ?>">
-                    <a href="index.php">
-                        <i class="fa-solid fa-table-columns"></i>
-                        Dashboard
-                    </a>
-                </li>
-
-                <li class="<?= $current_page == 'tugas_saya.php' ? 'active' : '' ?>">
-                    <a href="tugas_saya.php">
-                        <i class="fa-regular fa-clipboard"></i>
-                        Tugas Saya
-                    </a>
-                </li>
-
-                <li class="<?= $current_page == 'nilai.php' ? 'active' : '' ?>">
-                    <a href="nilai.php">
-                        <i class="fa-solid fa-chart-column"></i>
-                        Nilai
-                    </a>
-                </li>
-
-            </ul>
-
-        </div>
-
-        <ul class="menu">
-            <li class="logout">
-                <a href="/ta_deadlinehub/app/Views/auth/logout.php">
-                    <i class="fas fa-sign-out-alt"></i>
-                    Logout
-                </a>
-            </li>
-        </ul>
-
-    </aside>
-
+    <?php include __DIR__ . '/sidebar.php'; ?>
 
     <!-- MAIN -->
     <main class="main-content">
 
-        <!-- TAMBAHKAN DI DALAM <main class="main-content"> -->
-
         <div class="topbar">
+
             <div class="profile">
 
                 <i class="fa-regular fa-bell"></i>
@@ -138,7 +32,7 @@ $terlambat = mysqli_num_rows(
                         <i class="fa-solid fa-user"></i>
                     </div>
 
-                    <span>Siswa</span>
+                    <span><?= htmlspecialchars($_SESSION['username']); ?></span>
                 </div>
 
             </div>
@@ -147,7 +41,7 @@ $terlambat = mysqli_num_rows(
 
         <div class="page-title">
             <h1>Dashboard Siswa</h1>
-            <p>Selamat datang, Siswa! </p>
+            <p>Selamat datang, <?= htmlspecialchars($_SESSION['username']); ?>! </p>
         </div>
 
         <!-- CARD -->
@@ -195,7 +89,7 @@ $terlambat = mysqli_num_rows(
                     <i class="fa-regular fa-file-lines"></i>
                 </div>
 
-                <h2><?= $terlambat; ?></h2> 
+                <h2><?= $terlambat; ?></h2>
                 <h3>Perlu Dikumpulkan</h3>
                 <p>Melewati deadline</p>
 
@@ -283,7 +177,7 @@ $terlambat = mysqli_num_rows(
                         <td rowspan="2" class="mapel soft-mint">
                             PENJAS
                         </td>
-                        
+
                     </tr>
 
                     <tr>
@@ -299,15 +193,13 @@ $terlambat = mysqli_num_rows(
                             PROPGR
                         </td>
 
-                        
-                        
                     </tr>
 
                     <tr>
                         <td>10:00 - 10:15</td>
 
                         <td colspan="5" class="istirahat">
-                            ISTIRAHAT 
+                            ISTIRAHAT
                         </td>
                     </tr>
 
@@ -347,7 +239,7 @@ $terlambat = mysqli_num_rows(
                         <td>11:45 - 12:30</td>
 
                         <td colspan="5" class="istirahat">
-                            ISHOMA 
+                            ISHOMA
                         </td>
                     </tr>
 
@@ -396,9 +288,6 @@ $terlambat = mysqli_num_rows(
 
         </div>
 
-
-
-
         <!-- TASK -->
         <div class="task-wrapper">
 
@@ -415,11 +304,11 @@ $terlambat = mysqli_num_rows(
 
                 <div class="task-item">
 
-                    <h3><?= $tugas['nama_tugas']; ?></h3>
+                    <h3><?= htmlspecialchars($tugas['nama_tugas']); ?></h3>
 
                     <p>
-                        <i class="fa-solid fa-user"></i>
-                        <?= !empty($tugas['guru']) ? $tugas['guru'] : 'Guru'; ?>
+                        <i class="fa-solid fa-book"></i>
+                        <?= !empty($tugas['nama_mapel']) ? htmlspecialchars($tugas['nama_mapel']) : 'Mapel'; ?>
                     </p>
 
                     <p>
@@ -429,7 +318,7 @@ $terlambat = mysqli_num_rows(
                     </p>
 
                     <span class="badge progress">
-                        <?= $tugas['status_siswa']; ?>
+                        <?= htmlspecialchars($tugas['status_siswa']); ?>
                     </span>
 
                 </div>
