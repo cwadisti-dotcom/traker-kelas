@@ -32,7 +32,7 @@
 
                 <?php while($row = mysqli_fetch_assoc($tugas)): ?>
 
-                    <div class="task-card">
+                  <a href="detail_tugas.php?id=<?= $row['id']; ?>" class="task-card">
 
                         <div class="task-card-top">
                             <span class="mapel-tag">
@@ -52,12 +52,7 @@
                             </p>
                         </div>
 
-                        <a href="upload_tugas.php?id=<?= $row['id']; ?>" class="btn-primary">
-                            <i class="fa-solid fa-upload"></i>
-                            Upload Jawaban
-                        </a>
-
-                    </div>
+                    </a>
 
                 <?php endwhile; ?>
 
