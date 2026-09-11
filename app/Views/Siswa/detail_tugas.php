@@ -1,3 +1,4 @@
+<?php ?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -91,7 +92,7 @@
                                     </div>
                                     <span class="detail-file-name"><?= htmlspecialchars($tugas['file_pdf']); ?></span>
                                 </div>
-                                <a href="../uploads/tugas/<?= urlencode($tugas['file_pdf']); ?>" target="_blank" class="detail-file-button">
+                                <a href="../uploads/tugas/<?= rawurlencode($tugas['file_pdf']); ?>" target="_blank" class="detail-file-button">
                                     <i class="fa-solid fa-up-right-from-square"></i>
                                     Buka File
                                 </a>
@@ -120,7 +121,7 @@
                                         </div>
                                         <span class="detail-file-name"><?= htmlspecialchars($pengumpulan['file_jawaban']); ?></span>
                                     </div>
-                                    <a href="../uploads/jawaban/<?= urlencode($pengumpulan['file_jawaban']); ?>" target="_blank" class="detail-file-button">
+                                    <a href="../uploads/jawaban/<?= rawurlencode($pengumpulan['file_jawaban']); ?>" target="_blank" class="detail-file-button">
                                         <i class="fa-solid fa-up-right-from-square"></i>
                                         Lihat File
                                     </a>
