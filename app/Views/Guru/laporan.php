@@ -725,53 +725,41 @@ if (!$rekap) {
                                     </td>
 
 
-                                    <!-- AKSI -->
+<!-- AKSI -->
 
-                                    <td>
+<td>
 
-                                        <?php if (
-                                            $row['status'] === 'Sudah Dinilai'
-                                        ): ?>
+    <?php if ($row['status'] === 'Sudah Dinilai'): ?>
 
-                                            <button
-                                                type="button"
-                                                class="action-btn edit-btn"
-                                                onclick='openNilaiModal(
-                                                    <?= (int) $row['id'] ?>,
-                                                    <?= json_encode($row['nama_siswa']) ?>,
-                                                    <?= json_encode($row['nama_tugas']) ?>,
-                                                    <?= (int) $row['nilai'] ?>
-                                                )'
-                                            >
+        <button
+            type="button"
+            class="action-btn edit-btn"
+            onclick='openNilaiModal(
+                <?= (int) $row['id'] ?>,
+                <?= (int) $row['nilai'] ?>
+            )'
+        >
+            <i class="fa-solid fa-pen"></i>
+            Edit
+        </button>
 
-                                                <i class="fa-solid fa-pen"></i>
+    <?php else: ?>
 
-                                                Edit
+        <button
+            type="button"
+            class="action-btn edit-btn"
+            onclick='openNilaiModal(
+                <?= (int) $row['id'] ?>,
+                ""
+            )'
+        >
+            <i class="fa-solid fa-star"></i>
+            Nilai
+        </button>
 
-                                            </button>
+    <?php endif; ?>
 
-                                        <?php else: ?>
-
-                                            <button
-                                                type="button"
-                                                class="action-btn edit-btn"
-                                                onclick='openNilaiModal(
-                                                    <?= (int) $row['id'] ?>,
-                                                    <?= json_encode($row['nama_siswa']) ?>,
-                                                    <?= json_encode($row['nama_tugas']) ?>,
-                                                    ""
-                                                )'
-                                            >
-
-                                                <i class="fa-solid fa-star"></i>
-
-                                                Nilai
-
-                                            </button>
-
-                                        <?php endif; ?>
-
-                                    </td>
+</td>
 
 
                                 </tr>
@@ -820,9 +808,7 @@ if (!$rekap) {
 
     <div class="modal-box">
 
-
         <!-- HEADER MODAL -->
-
         <div class="modal-header">
 
             <h2
@@ -831,7 +817,6 @@ if (!$rekap) {
             >
                 Input Nilai
             </h2>
-
 
             <button
                 type="button"
@@ -845,12 +830,9 @@ if (!$rekap) {
 
 
         <!-- FORM -->
-
         <form method="POST">
 
-
             <!-- ID PENGUMPULAN -->
-
             <input
                 type="hidden"
                 name="pengumpulan_id"
@@ -858,44 +840,7 @@ if (!$rekap) {
             >
 
 
-            <!-- NAMA SISWA -->
-
-            <div class="form-group">
-
-                <label>
-                    Nama Siswa
-                </label>
-
-                <input
-                    type="text"
-                    class="form-input"
-                    id="modal_siswa"
-                    readonly
-                >
-
-            </div>
-
-
-            <!-- NAMA TUGAS -->
-
-            <div class="form-group">
-
-                <label>
-                    Nama Tugas
-                </label>
-
-                <input
-                    type="text"
-                    class="form-input"
-                    id="modal_tugas"
-                    readonly
-                >
-
-            </div>
-
-
             <!-- NILAI -->
-
             <div class="form-group">
 
                 <label>
@@ -916,20 +861,15 @@ if (!$rekap) {
 
 
             <!-- SUBMIT -->
-
             <button
                 type="submit"
                 name="simpan_nilai"
                 class="submit-btn"
                 id="modalSubmit"
             >
-
                 <i class="fa-solid fa-check"></i>
-
                 Simpan Nilai
-
             </button>
-
 
         </form>
 
@@ -944,71 +884,40 @@ if (!$rekap) {
 
 <script>
 
-
 /* =====================================================
    BUKA MODAL NILAI
 ===================================================== */
 
-function openNilaiModal(id, siswa, tugas, nilai) {
-
+function openNilaiModal(id, nilai) {
 
     // Simpan ID pengumpulan
-    document.getElementById(
-        'pengumpulan_id'
-    ).value = id;
+    document.getElementById('pengumpulan_id').value = id;
 
+    // Masukkan nilai ke input
+    document.getElementById('modal_nilai').value = nilai;
 
     // Tampilkan modal
-    document.getElementById(
-        'nilaiModal'
-    ).classList.add('is-open');
+    document.getElementById('nilaiModal').classList.add('is-open');
 
 
-    // Tampilkan nama siswa
-    document.getElementById(
-        'modal_siswa'
-    ).value = siswa;
-
-
-    // Tampilkan nama tugas
-    document.getElementById(
-        'modal_tugas'
-    ).value = tugas;
-
-
-    // Tampilkan nilai
-    document.getElementById(
-        'modal_nilai'
-    ).value = nilai;
-
-
-    // Jika belum dinilai
+    // Jika belum ada nilai
     if (nilai === '') {
 
+        document.getElementById('modalTitle').innerText =
+            'Input Nilai';
 
-        document.getElementById(
-            'modalTitle'
-        ).innerText = 'Input Nilai';
-
-
-        document.getElementById(
-            'modalSubmit'
-        ).innerHTML =
+        document.getElementById('modalSubmit').innerHTML =
             '<i class="fa-solid fa-check"></i> Simpan Nilai';
 
+    }
 
-    } else {
+    // Jika sudah ada nilai
+    else {
 
+        document.getElementById('modalTitle').innerText =
+            'Edit Nilai';
 
-        // Jika sudah dinilai
-        document.getElementById(
-            'modalTitle'
-        ).innerText = 'Edit Nilai';
-
-
-        document.getElementById(
-            'modalSubmit'
-        ).innerHTML =
+        document.getElementById('modalSubmit').innerHTML =
             '<i class="fa-solid fa-check"></i> Simpan Perubahan';
 
     }
@@ -1022,9 +931,9 @@ function openNilaiModal(id, siswa, tugas, nilai) {
 
 function closeNilaiModal() {
 
-    document.getElementById(
-        'nilaiModal'
-    ).classList.remove('is-open');
+    document
+        .getElementById('nilaiModal')
+        .classList.remove('is-open');
 
 }
 
@@ -1033,22 +942,23 @@ function closeNilaiModal() {
    KLIK AREA GELAP UNTUK MENUTUP MODAL
 ===================================================== */
 
-document.getElementById(
-    'nilaiModal'
-).addEventListener(
-    'click',
-    function(e) {
+document
+    .getElementById('nilaiModal')
+    .addEventListener(
+        'click',
+        function(e) {
 
-        if (e.target === this) {
+            if (e.target === this) {
 
-            closeNilaiModal();
+                closeNilaiModal();
+
+            }
 
         }
-
-    }
-);
+    );
 
 </script>
+
 
 
 </body>
