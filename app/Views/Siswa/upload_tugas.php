@@ -21,8 +21,8 @@
 
             <h1 class="page-title">Upload Jawaban</h1>
             <p class="page-subtitle">Upload file tugas yang sudah kamu kerjakan.</p>
+<form method="POST" enctype="multipart/form-data">
 
-            <form action="" method="POST" enctype="multipart/form-data">
 
                 <div class="form-box">
 
@@ -38,18 +38,14 @@
 
                     <div class="form-group">
                         <label>Pilih Tugas</label>
-                        <select name="tugas_id" class="form-input" required>
-                            <option value="">-- Pilih Tugas --</option>
-
-                            <?php while($row = mysqli_fetch_assoc($tugasList)): ?>
-                                <option
-                                    value="<?= $row['id']; ?>"
-                                    <?= isset($_GET['id']) && $_GET['id'] == $row['id'] ? 'selected' : ''; ?>
-                                >
-                                    <?= htmlspecialchars($row['nama_tugas']); ?>
-                                </option>
-                            <?php endwhile; ?>
-                        </select>
+<select name="tugas_id" id="pilih_tugas" class="form-input" required>
+    <option value="">-- Pilih Tugas --</option>
+    <?php while ($row = mysqli_fetch_assoc($tugasList)): ?>
+        <option value="<?= $row['id']; ?>" <?= (isset($_GET['id']) && $_GET['id'] == $row['id']) ? 'selected' : '' ?>>
+            <?= htmlspecialchars($row['nama_tugas']); ?>
+        </option>
+    <?php endwhile; ?>
+</select>
                     </div>
 
                     <div class="form-group">

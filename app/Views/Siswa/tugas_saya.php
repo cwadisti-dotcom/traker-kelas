@@ -38,9 +38,19 @@
                             <span class="mapel-tag">
                                 <?= !empty($row['nama_mapel']) ? htmlspecialchars($row['nama_mapel']) : '-'; ?>
                             </span>
-                            <span class="badge progress">
-                                <?= htmlspecialchars($row['status']); ?>
-                            </span>
+                        <?php
+    $status_siswa = $row['status_siswa'];
+    $badge_class = 'progress'; // default: Belum Dikerjakan
+
+    if ($status_siswa === 'Belum Dinilai') {
+        $badge_class = 'pending';
+    } elseif ($status_siswa === 'Sudah Dinilai') {
+        $badge_class = 'success';
+    }
+?>
+<span class="badge <?= $badge_class; ?>">
+    <?= htmlspecialchars($status_siswa); ?>
+</span>
                         </div>
 
                         <h3><?= htmlspecialchars($row['nama_tugas']); ?></h3>

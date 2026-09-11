@@ -165,6 +165,25 @@ class TugasModel
              ORDER BY tugas.deadline ASC"
         );
     }
+    public function getAllWithStatusSiswa($siswa_id)
+{
+    $siswa_id = (int) $siswa_id;
+
+    return mysqli_query(
+        $this->koneksi,
+        "SELECT
+            tugas.*,
+            mapel.nama_mapel,
+            COALESCE(pengumpulan_tugas.status, 'Belum Dikerjakan') AS status_siswa
+         FROM tugas
+         LEFT JOIN mapel
+            ON tugas.mapel_id = mapel.id
+         LEFT JOIN pengumpulan_tugas
+            ON tugas.id = pengumpulan_tugas.tugas_id
+            AND pengumpulan_tugas.siswa_id = '$siswa_id'
+         ORDER BY tugas.deadline ASC"
+    );
+}
 
     public function getTotalTerlambat($siswa_id)
     {

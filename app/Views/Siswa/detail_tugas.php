@@ -87,41 +87,85 @@
                         </div>
 
 
-                        <!-- KUMPULKAN JAWABAN -->
-                        <div class="detail-card detail-submit-card">
+                        <!-- KUMPULKAN JAWABAN / HASIL PENILAIAN -->
+                        <?php if ($pengumpulan): ?>
 
-                            <h2>Kumpulkan jawaban</h2>
+                            <div class="detail-card detail-submit-card">
 
-                            <p class="submit-info">
-                                Format: PDF maksimal 5MB.
-                            </p>
+                                <h2>
+                                    <?= $pengumpulan['status'] === 'Sudah Dinilai'
+                                        ? 'Hasil Penilaian Tugas'
+                                        : 'Jawaban Terkirim'; ?>
+                                </h2>
 
-                            <form
-                                action="upload_tugas.php?id=<?= $tugas['id']; ?>"
-                                method="POST"
-                                enctype="multipart/form-data"
-                            >
+                                <?php if (!empty($pengumpulan['jawaban'])): ?>
+                                    <p class="submit-info">Jawaban yang dikumpulkan</p>
+                                    <div class="jawaban-box">
+                                        <?= nl2br(htmlspecialchars($pengumpulan['jawaban'])); ?>
+                                    </div>
+                                <?php endif; ?>
 
-                                <input
-                                    type="file"
-                                    name="file"
-                                    class="detail-file-input"
-                                    accept=".pdf"
-                                    required
+                                <?php if (!empty($pengumpulan['file_jawaban'])): ?>
+                                    <a href="../uploads/jawaban/<?= urlencode($pengumpulan['file_jawaban']); ?>" target="_blank" class="material-file" style="text-decoration:none; color:inherit;">
+                                        <i class="fa-regular fa-file-lines"></i>
+                                        <span><?= htmlspecialchars($pengumpulan['file_jawaban']); ?></span>
+                                    </a>
+                                <?php endif; ?>
+
+                                <?php if ($pengumpulan['status'] === 'Sudah Dinilai'): ?>
+                                    <p class="submit-info" style="margin-top:16px;">Nilai</p>
+                                    <h2><?= (int) $pengumpulan['nilai']; ?></h2>
+                                <?php else: ?>
+                                    <p class="submit-info" style="margin-top:16px;">
+                                        Menunggu penilaian guru.
+                                    </p>
+                                <?php endif; ?>
+
+                            </div>
+
+                        <?php else: ?>
+
+                            <div class="detail-card detail-submit-card">
+
+                                <h2>Kumpulkan jawaban</h2>
+
+                                <p class="submit-info">
+                                    Format: PDF maksimal 5MB.
+                                </p>
+
+                                <form
+                                    action="upload_tugas.php?id=<?= $tugas['id']; ?>"
+                                    method="POST"
+                                    enctype="multipart/form-data"
                                 >
+                                    <textarea
+                                        name="catatan"
+                                        placeholder="Tulis jawabanmu di sini..."
+                                        rows="4"
+                                        style="width:100%; margin-bottom:12px; padding:10px; border-radius:8px; border:1px solid #ddd;"
+                                    ></textarea>
 
-                                <button
-                                    type="submit"
-                                    name="upload"
-                                    class="detail-upload-button"
-                                >
-                                    <i class="fa-solid fa-arrow-up"></i>
-                                    Upload jawaban
-                                </button>
+                                    <input
+                                        type="file"
+                                        name="file"
+                                        class="detail-file-input"
+                                        accept=".pdf"
+                                        required
+                                    >
 
-                            </form>
+                                    <button
+                                        type="submit"
+                                        name="upload"
+                                        class="detail-upload-button"
+                                    >
+                                        <i class="fa-solid fa-arrow-up"></i>
+                                        Upload jawaban
+                                    </button>
+                                </form>
 
-                        </div>
+                            </div>
+
+                        <?php endif; ?>
 
                     </div>
 

@@ -196,4 +196,19 @@ class PengumpulanModel
             ('$tugas_id', '$siswa_id', '$catatan_esc', '$file_esc', 'Belum Dinilai')"
         );
     }
+    public function getBySiswaAndTugas($tugas_id, $siswa_id)
+{
+    $tugas_id = (int) $tugas_id;
+    $siswa_id = (int) $siswa_id;
+
+    $query = mysqli_query(
+        $this->koneksi,
+        "SELECT * FROM pengumpulan_tugas
+         WHERE tugas_id = '$tugas_id'
+         AND siswa_id = '$siswa_id'
+         LIMIT 1"
+    );
+
+    return mysqli_fetch_assoc($query);
+}
 }

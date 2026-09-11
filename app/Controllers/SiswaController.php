@@ -39,22 +39,25 @@ public function __construct($koneksi)
         ];
     }
 
-    public function tugasSaya()
-    {
-        $siswa_id = $_SESSION['id'] ?? null;
-
-        return [
-            'tugas' => $this->tugasModel->getBelumDikumpulkan($siswa_id)
-        ];
-    }
-    public function detailTugas()
+public function tugasSaya()
 {
-    $id = $_GET['id'] ?? 0;
-
-    $tugas = $this->tugasModel->getById($id);
+    $siswa_id = $_SESSION['id'] ?? null;
 
     return [
-        'tugas' => $tugas
+        'tugas' => $this->tugasModel->getAllWithStatusSiswa($siswa_id)
+    ];
+}
+public function detailTugas()
+{
+    $id       = $_GET['id'] ?? 0;
+    $siswa_id = $_SESSION['id'] ?? null;
+
+    $tugas       = $this->tugasModel->getById($id);
+    $pengumpulan = $this->pengumpulanModel->getBySiswaAndTugas($id, $siswa_id);
+
+    return [
+        'tugas'       => $tugas,
+        'pengumpulan' => $pengumpulan
     ];
 }
 
@@ -87,41 +90,54 @@ public function nilai()
     ];
 }
 
-    public function uploadTugas()
-    {
-        $siswa_id = $_SESSION['id'] ?? null;
+   public function uploadTugas()
+{
+    $siswa_id = $_SESSION['id'] ?? null;
 
-        if (isset($_POST['upload'])) {
-            $tugas_id = $_POST['tugas_id'];
-            $catatan  = $_POST['catatan'];
+if (isset($_POST['upload'])) {
 
-            $file_jawaban = '';
+  $tugas_id = (int) ($_POST['tugas_id'] ?? $_GET['id'] ?? 0);
+    $catatan  = $_POST['catatan'] ?? '';
 
-            if (!empty($_FILES['file']['name'])) {
-                $namaFile = $_FILES['file']['name'];
-                $tmpFile  = $_FILES['file']['tmp_name'];
-
-                move_uploaded_file(
-                    $tmpFile,
-                    __DIR__ . '/../../uploads/jawaban/' . $namaFile
-                );
-
-                $file_jawaban = $namaFile;
-            }
-
-            $this->pengumpulanModel->simpan(
-                $tugas_id,
-                $siswa_id,
-                $catatan,
-                $file_jawaban
-            );
-
-            header("Location: tugas_saya.php?berhasil=1");
-            exit;
-        }
-
-        return [
-            'tugasList' => $this->tugasModel->getAll()
-        ];
+    if ($tugas_id <= 0) {
+        header("Location: upload_tugas.php?error=pilih_tugas_dulu");
+        exit;
     }
+
+        $file_jawaban = '';
+
+     if (!empty($_FILES['file']['name'])) {
+    $namaFile = $_FILES['file']['name'];
+    $tmpFile  = $_FILES['file']['tmp_name'];
+
+    $folderTujuan = __DIR__ . '/../../uploads/jawaban/';
+
+    if (!is_dir($folderTujuan)) {
+        mkdir($folderTujuan, 0777, true);
+    }
+
+    $berhasil = move_uploaded_file($tmpFile, $folderTujuan . $namaFile);
+
+    if ($berhasil) {
+        $file_jawaban = $namaFile;
+    } else {
+        die('Upload file gagal. Cek folder uploads/jawaban ada dan bisa ditulis.');
+    }
+}
+
+        $this->pengumpulanModel->simpan(
+            $tugas_id,
+            $siswa_id,
+            $catatan,
+            $file_jawaban
+        );
+
+        header("Location: tugas_saya.php?berhasil=1");
+        exit;
+    }
+
+    return [
+        'tugasList' => $this->tugasModel->getAll()
+    ];
+}
 }
