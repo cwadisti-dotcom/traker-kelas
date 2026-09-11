@@ -120,8 +120,8 @@
 
                 <div class="form-group">
                     <label>File Materi</label>
-                    <input type="file" name="file_materi" accept=".pdf,.jpg,.jpeg,.png,.ppt,.pptx,.doc,.docx" class="form-file" required>
-                    <small>Format: PDF, JPG, PNG, PPT, DOCX</small>
+                    <input type="file" name="file_materi" accept=".pdf" class="form-file" required>
+                    <small>Format: PDF maksimal 5MB.</small>
                 </div>
 
                 <button type="submit" name="simpan_materi" class="submit-btn">
@@ -170,8 +170,8 @@
 
                 <div class="form-group">
                     <label>Ganti File (opsional)</label>
-                    <input type="file" name="file_materi" accept=".pdf,.jpg,.jpeg,.png,.ppt,.pptx,.doc,.docx" class="form-file">
-                    <small>Kosongkan jika tidak ingin mengganti file</small>
+                    <input type="file" name="file_materi" accept=".pdf" class="form-file">
+                    <small>Format: PDF. Kosongkan jika tidak ingin mengganti file.</small>
                 </div>
 
                 <button type="submit" name="update_materi" class="submit-btn">

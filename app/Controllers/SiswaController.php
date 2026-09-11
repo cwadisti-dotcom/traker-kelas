@@ -2,11 +2,13 @@
 
 require_once __DIR__ . '/../Models/TugasModel.php';
 require_once __DIR__ . '/../Models/PengumpulanModel.php';
+require_once __DIR__ . '/../Models/MateriModel.php';
 
 class SiswaController
 {
     private $tugasModel;
     private $pengumpulanModel;
+    private $materiModel;
 
    private $koneksi;
 
@@ -15,6 +17,7 @@ public function __construct($koneksi)
     $this->koneksi = $koneksi;
     $this->tugasModel = new TugasModel($koneksi);
     $this->pengumpulanModel = new PengumpulanModel($koneksi);
+    $this->materiModel = new MateriModel($koneksi);
 }
 
     public function dashboard()
@@ -44,7 +47,8 @@ public function tugasSaya()
     $siswa_id = $_SESSION['id'] ?? null;
 
     return [
-        'tugas' => $this->tugasModel->getAllWithStatusSiswa($siswa_id)
+        'tugas'  => $this->tugasModel->getAllWithStatusSiswa($siswa_id),
+        'materi' => $this->materiModel->getAll()
     ];
 }
 public function detailTugas()
@@ -58,6 +62,15 @@ public function detailTugas()
     return [
         'tugas'       => $tugas,
         'pengumpulan' => $pengumpulan
+    ];
+}
+
+public function detailMateri()
+{
+    $id = $_GET['id'] ?? 0;
+
+    return [
+        'materi' => $this->materiModel->getById($id)
     ];
 }
 
@@ -109,6 +122,15 @@ if (isset($_POST['upload'])) {
      if (!empty($_FILES['file']['name'])) {
     $namaFile = $_FILES['file']['name'];
     $tmpFile  = $_FILES['file']['tmp_name'];
+
+    $ext = strtolower(pathinfo($namaFile, PATHINFO_EXTENSION));
+
+    if ($ext !== 'pdf') {
+        header("Location: detail_tugas.php?id={$tugas_id}&error=format_tidak_didukung");
+        exit;
+    }
+
+    $namaFile = uniqid('jawaban_') . '.' . $ext;
 
     $folderTujuan = __DIR__ . '/../../uploads/jawaban/';
 

@@ -133,7 +133,7 @@ class GuruController
 
             if($file_materi === false)
             {
-                $error = "Format file tidak didukung. Gunakan PDF, JPG, PNG, PPT, atau DOCX.";
+                $error = "Format file tidak didukung. Hanya file PDF yang diperbolehkan.";
             }
             else
             {
@@ -159,16 +159,23 @@ class GuruController
                 $file_materi = $this->uploadMateri($_FILES['file_materi']);
             }
 
-            $this->materiModel->update(
-                $_POST['id'],
-                $_POST['judul'],
-                $_POST['mapel_id'],
-                $_POST['deskripsi'],
-                $file_materi
-            );
+            if($file_materi === false)
+            {
+                $error = "Format file tidak didukung. Hanya file PDF yang diperbolehkan.";
+            }
+            else
+            {
+                $this->materiModel->update(
+                    $_POST['id'],
+                    $_POST['judul'],
+                    $_POST['mapel_id'],
+                    $_POST['deskripsi'],
+                    $file_materi
+                );
 
-            header("Location: materi.php");
-            exit;
+                header("Location: materi.php");
+                exit;
+            }
         }
 
         return [
@@ -185,7 +192,7 @@ class GuruController
             return '';
         }
 
-        $allowedExt = ['pdf', 'jpg', 'jpeg', 'png', 'ppt', 'pptx', 'doc', 'docx'];
+        $allowedExt = ['pdf'];
 
         $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
 
@@ -206,6 +213,8 @@ class GuruController
 
     public function tugas()
     {
+        $error = null;
+
         if(isset($_GET['hapus']))
         {
             $this->tugasModel->hapus($_GET['hapus']);
@@ -222,32 +231,26 @@ class GuruController
             $deadline   = $_POST['deadline'];
             $guru_id    = $_SESSION['id'] ?? null;
 
-            $file_pdf = '';
+            $file_pdf = $this->uploadTugasFile($_FILES['file_pdf']);
 
-            if($_FILES['file_pdf']['name'] != '')
+            if($file_pdf === false)
             {
-                $namaFile = $_FILES['file_pdf']['name'];
-                $tmpFile  = $_FILES['file_pdf']['tmp_name'];
-
-                move_uploaded_file(
-                    $tmpFile,
-                    __DIR__ . '/../../uploads/tugas/' . $namaFile
+                $error = "Format file tidak didukung. Hanya file PDF yang diperbolehkan.";
+            }
+            else
+            {
+                $this->tugasModel->tambah(
+                    $nama_tugas,
+                    $deskripsi,
+                    $file_pdf,
+                    $deadline,
+                    $guru_id,
+                    $mapel_id
                 );
 
-                $file_pdf = $namaFile;
+                header("Location: tugas.php");
+                exit;
             }
-
-            $this->tugasModel->tambah(
-                $nama_tugas,
-                $deskripsi,
-                $file_pdf,
-                $deadline,
-                $guru_id,
-                $mapel_id
-            );
-
-            header("Location: tugas.php");
-            exit;
         }
 
         if(isset($_POST['update']))
@@ -266,8 +269,40 @@ class GuruController
 
         return [
             'tugas' => $this->tugasModel->getAll(),
-            'mapelList' => $this->mapelModel->getAll()
+            'mapelList' => $this->mapelModel->getAll(),
+            'error' => $error
         ];
+    }
+
+    private function uploadTugasFile($file)
+    {
+        if(empty($file['name']))
+        {
+            return '';
+        }
+
+        $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+
+        if($ext !== 'pdf')
+        {
+            return false;
+        }
+
+        $namaBaru = uniqid('tugas_') . '.' . $ext;
+
+        $folderTujuan = __DIR__ . '/../../uploads/tugas/';
+
+        if(!is_dir($folderTujuan))
+        {
+            mkdir($folderTujuan, 0777, true);
+        }
+
+        move_uploaded_file(
+            $file['tmp_name'],
+            $folderTujuan . $namaBaru
+        );
+
+        return $namaBaru;
     }
 
 

@@ -28,6 +28,10 @@
                 </button>
             </div>
 
+            <?php if(!empty($error)): ?>
+                <div class="alert-error"><?= htmlspecialchars($error); ?></div>
+            <?php endif; ?>
+
             <div class="table-box">
 
                 <table>

@@ -26,10 +26,27 @@ class MateriModel
 
         $query = mysqli_query(
             $this->koneksi,
-            "SELECT * FROM materi WHERE id='$id'"
+            "SELECT materi.*, mapel.nama_mapel
+             FROM materi
+             LEFT JOIN mapel ON materi.mapel_id = mapel.id
+             WHERE materi.id='$id'"
         );
 
         return mysqli_fetch_assoc($query);
+    }
+
+    public function getByMapel($mapel_id)
+    {
+        $mapel_id = (int) $mapel_id;
+
+        return mysqli_query(
+            $this->koneksi,
+            "SELECT materi.*, mapel.nama_mapel
+             FROM materi
+             LEFT JOIN mapel ON materi.mapel_id = mapel.id
+             WHERE materi.mapel_id='$mapel_id'
+             ORDER BY materi.created_at DESC"
+        );
     }
 
     public function tambah($judul, $deskripsi, $file_materi, $mapel_id, $guru_id)

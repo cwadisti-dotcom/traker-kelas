@@ -22,214 +22,190 @@
 
         <div class="content-box">
 
-            <?php if (!$tugas): ?>
+            <div class="detail-page">
 
-                <a href="tugas_saya.php" class="detail-back">
+                <a href="tugas_saya.php" class="back-link">
                     <i class="fa-solid fa-arrow-left"></i>
-                    Kembali ke tugas saya
+                    Kembali ke pengumpulan
                 </a>
 
-                <div class="detail-not-found">
-                    Tugas tidak ditemukan.
-                </div>
+                <?php if (!$tugas): ?>
 
-            <?php else: ?>
+                    <div class="empty-state">Tugas tidak ditemukan.</div>
 
-                <!-- KEMBALI -->
-                <a href="tugas_saya.php" class="detail-back">
-                    <i class="fa-solid fa-arrow-left"></i>
-                    Kembali ke tugas saya
-                </a>
+                <?php else: ?>
 
+                    <?php
+                        $status_saat_ini = $pengumpulan['status'] ?? 'Belum Dikerjakan';
+                    ?>
 
-                <!-- LAYOUT DETAIL -->
-                <div class="detail-layout">
+                    <!-- HEADER -->
+                    <div class="detail-header">
+                        <h1 class="detail-title"><?= htmlspecialchars($tugas['nama_tugas']); ?></h1>
+                    </div>
 
-                    <!-- =========================
-                         KOLOM KIRI
-                    ========================== -->
-                    <div class="detail-left">
+                    <!-- DESKRIPSI -->
+                    <div class="detail-section">
+                        <div class="detail-section-title">
+                            <i class="fa-regular fa-file-lines"></i>
+                            Deskripsi Tugas
+                        </div>
+                        <p class="detail-description">
+                            <?= nl2br(htmlspecialchars($tugas['deskripsi'] ?? '-')); ?>
+                        </p>
+                    </div>
 
+                    <!-- INFORMASI -->
+                    <div class="detail-section">
+                        <div class="detail-section-title">
+                            <i class="fa-regular fa-clock"></i>
+                            Informasi
+                        </div>
+                        <div class="detail-info-grid cols-2">
+                            <div class="detail-info-item">
+                                <span class="detail-info-label">Mapel</span>
+                                <span class="detail-info-value">
+                                    <?= !empty($tugas['nama_mapel']) ? htmlspecialchars($tugas['nama_mapel']) : '-'; ?>
+                                </span>
+                            </div>
+                            <div class="detail-info-item">
+                                <span class="detail-info-label">Deadline</span>
+                                <span class="detail-info-value">
+                                    <?= date('d M Y', strtotime($tugas['deadline'])); ?>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
 
-                        <!-- JUDUL + DESKRIPSI -->
-                        <div class="detail-task-card">
+                    <!-- FILE TUGAS -->
+                    <?php if (!empty($tugas['file_pdf'])): ?>
+                        <div class="detail-section">
+                            <div class="detail-section-title">
+                                <i class="fa-regular fa-folder-open"></i>
+                                File Tugas
+                            </div>
+                            <div class="detail-file">
+                                <div class="detail-file-info">
+                                    <div class="detail-file-icon">
+                                        <i class="fa-regular fa-file-lines"></i>
+                                    </div>
+                                    <span class="detail-file-name"><?= htmlspecialchars($tugas['file_pdf']); ?></span>
+                                </div>
+                                <a href="../uploads/tugas/<?= urlencode($tugas['file_pdf']); ?>" target="_blank" class="detail-file-button">
+                                    <i class="fa-solid fa-up-right-from-square"></i>
+                                    Buka File
+                                </a>
+                            </div>
+                        </div>
+                    <?php endif; ?>
 
-                            <h1>
-                                <?= htmlspecialchars($tugas['nama_tugas']); ?>
-                            </h1>
+                    <!-- KUMPULKAN JAWABAN / HASIL PENILAIAN -->
+                    <?php if ($pengumpulan): ?>
 
-                            <p>
-                                <?= nl2br(
-                                    htmlspecialchars(
-                                        $tugas['deskripsi'] ?? '-'
-                                    )
-                                ); ?>
+                        <div class="detail-section">
+                            <div class="detail-section-title">
+                                <i class="fa-solid <?= $status_saat_ini === 'Sudah Dinilai' ? 'fa-clipboard-check' : 'fa-paper-plane'; ?>"></i>
+                                <?= $status_saat_ini === 'Sudah Dinilai' ? 'Hasil Penilaian Tugas' : 'Jawaban Terkirim'; ?>
+                            </div>
+
+                            <?php if (!empty($pengumpulan['jawaban'])): ?>
+                                <p class="detail-description"><?= nl2br(htmlspecialchars($pengumpulan['jawaban'])); ?></p>
+                            <?php endif; ?>
+
+                            <?php if (!empty($pengumpulan['file_jawaban'])): ?>
+                                <div class="detail-file">
+                                    <div class="detail-file-info">
+                                        <div class="detail-file-icon">
+                                            <i class="fa-regular fa-file-lines"></i>
+                                        </div>
+                                        <span class="detail-file-name"><?= htmlspecialchars($pengumpulan['file_jawaban']); ?></span>
+                                    </div>
+                                    <a href="../uploads/jawaban/<?= urlencode($pengumpulan['file_jawaban']); ?>" target="_blank" class="detail-file-button">
+                                        <i class="fa-solid fa-up-right-from-square"></i>
+                                        Lihat File
+                                    </a>
+                                </div>
+                            <?php endif; ?>
+
+                            <?php if ($status_saat_ini === 'Sudah Dinilai'): ?>
+                                <div class="detail-info-grid cols-2" style="margin-top:16px;">
+                                    <div class="detail-info-item">
+                                        <span class="detail-info-label">Status</span>
+                                        <span class="detail-info-value">Sudah Dinilai</span>
+                                    </div>
+                                    <div class="detail-info-item">
+                                        <span class="detail-info-label">Nilai</span>
+                                        <span class="detail-info-value"><?= (int) $pengumpulan['nilai']; ?></span>
+                                    </div>
+                                </div>
+                            <?php else: ?>
+                                <p class="detail-description" style="margin-top:12px; color:var(--color-text-muted);">
+                                    Menunggu penilaian guru.
+                                </p>
+                            <?php endif; ?>
+                        </div>
+
+                    <?php else: ?>
+
+                        <div class="detail-section">
+                            <div class="detail-section-title">
+                                <i class="fa-solid fa-paper-plane"></i>
+                                Kumpulkan Jawaban
+                            </div>
+
+                            <p class="detail-description" style="margin-bottom:16px;">
+                                Format: PDF maksimal 5MB.
                             </p>
 
-                        </div>
+                            <?php if (($_GET['error'] ?? '') === 'format_tidak_didukung'): ?>
+                                <div class="alert-error" style="margin-bottom:16px;">
+                                    Format file tidak didukung. Hanya file PDF yang diperbolehkan.
+                                </div>
+                            <?php endif; ?>
 
-
-                        <!-- MATERI TERKAIT -->
-                        <div class="detail-card detail-material-card">
-
-                            <h2>Materi terkait</h2>
-
-                            <div class="material-file">
-
-                                <i class="fa-regular fa-file-lines"></i>
-
-                                <span>
-                                    Materi terkait tugas
-                                </span>
-
-                            </div>
-
-                        </div>
-
-
-                        <!-- KUMPULKAN JAWABAN / HASIL PENILAIAN -->
-                        <?php if ($pengumpulan): ?>
-
-                            <div class="detail-card detail-submit-card">
-
-                                <h2>
-                                    <?= $pengumpulan['status'] === 'Sudah Dinilai'
-                                        ? 'Hasil Penilaian Tugas'
-                                        : 'Jawaban Terkirim'; ?>
-                                </h2>
-
-                                <?php if (!empty($pengumpulan['jawaban'])): ?>
-                                    <p class="submit-info">Jawaban yang dikumpulkan</p>
-                                    <div class="jawaban-box">
-                                        <?= nl2br(htmlspecialchars($pengumpulan['jawaban'])); ?>
-                                    </div>
-                                <?php endif; ?>
-
-                                <?php if (!empty($pengumpulan['file_jawaban'])): ?>
-                                    <a href="../uploads/jawaban/<?= urlencode($pengumpulan['file_jawaban']); ?>" target="_blank" class="material-file" style="text-decoration:none; color:inherit;">
-                                        <i class="fa-regular fa-file-lines"></i>
-                                        <span><?= htmlspecialchars($pengumpulan['file_jawaban']); ?></span>
-                                    </a>
-                                <?php endif; ?>
-
-                                <?php if ($pengumpulan['status'] === 'Sudah Dinilai'): ?>
-                                    <p class="submit-info" style="margin-top:16px;">Nilai</p>
-                                    <h2><?= (int) $pengumpulan['nilai']; ?></h2>
-                                <?php else: ?>
-                                    <p class="submit-info" style="margin-top:16px;">
-                                        Menunggu penilaian guru.
-                                    </p>
-                                <?php endif; ?>
-
-                            </div>
-
-                        <?php else: ?>
-
-                            <div class="detail-card detail-submit-card">
-
-                                <h2>Kumpulkan jawaban</h2>
-
-                                <p class="submit-info">
-                                    Format: PDF maksimal 5MB.
-                                </p>
-
-                                <form
-                                    action="upload_tugas.php?id=<?= $tugas['id']; ?>"
-                                    method="POST"
-                                    enctype="multipart/form-data"
-                                >
+                            <form
+                                action="upload_tugas.php?id=<?= $tugas['id']; ?>"
+                                method="POST"
+                                enctype="multipart/form-data"
+                            >
+                                <div class="form-group">
+                                    <label>Catatan</label>
                                     <textarea
                                         name="catatan"
+                                        class="form-textarea"
                                         placeholder="Tulis jawabanmu di sini..."
-                                        rows="4"
-                                        style="width:100%; margin-bottom:12px; padding:10px; border-radius:8px; border:1px solid #ddd;"
                                     ></textarea>
+                                </div>
 
+                                <div class="form-group">
+                                    <label>File Jawaban</label>
                                     <input
                                         type="file"
                                         name="file"
-                                        class="detail-file-input"
+                                        class="form-file"
                                         accept=".pdf"
                                         required
                                     >
+                                </div>
 
+                                <div class="detail-action">
                                     <button
                                         type="submit"
                                         name="upload"
-                                        class="detail-upload-button"
+                                        class="detail-upload-btn"
                                     >
                                         <i class="fa-solid fa-arrow-up"></i>
-                                        Upload jawaban
+                                        Upload Jawaban
                                     </button>
-                                </form>
-
-                            </div>
-
-                        <?php endif; ?>
-
-                    </div>
-
-
-                    <!-- =========================
-                         KOLOM KANAN
-                    ========================== -->
-                    <div class="detail-right">
-
-                        <div class="detail-info-card">
-
-                            <h2>Informasi</h2>
-
-
-                            <div class="info-item">
-
-                                <span class="info-label">
-                                    Mapel
-                                </span>
-
-                                <span class="info-value">
-                                    <?= !empty($tugas['nama_mapel'])
-                                        ? htmlspecialchars($tugas['nama_mapel'])
-                                        : '-'; ?>
-                                </span>
-
-                            </div>
-
-
-                            <div class="info-item">
-
-                                <span class="info-label">
-                                    Deadline
-                                </span>
-
-                                <span class="info-value">
-                                    <?= date(
-                                        'd M Y',
-                                        strtotime($tugas['deadline'])
-                                    ); ?>
-                                </span>
-
-                            </div>
-
-
-                            <div class="info-item">
-
-                                <span class="info-label">
-                                    Status
-                                </span>
-
-                                <span class="info-status">
-                                    <?= htmlspecialchars($tugas['status']); ?>
-                                </span>
-
-                            </div>
-
+                                </div>
+                            </form>
                         </div>
 
-                    </div>
+                    <?php endif; ?>
 
-                </div>
+                <?php endif; ?>
 
-            <?php endif; ?>
+            </div>
 
         </div>
 
