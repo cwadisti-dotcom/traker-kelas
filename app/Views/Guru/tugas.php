@@ -52,6 +52,11 @@
                         <td><?= date('d M Y', strtotime($row['deadline'])); ?></td>
                         <td><?= htmlspecialchars($row['status']); ?></td>
                         <td>
+                            <!-- Tombol Viewer -->
+                            <a href="detail_tugas.php?id=<?= $row['id']; ?>" class="btn-edit" style="background-color: #0284c7; color: white; margin-right: 4px; text-decoration: none; display: inline-block;">
+                                Viewer
+                            </a>
+
                             <button
                                 type="button"
                                 class="btn-edit btn-edit-tugas-trigger"

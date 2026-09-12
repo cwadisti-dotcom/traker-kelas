@@ -9,16 +9,15 @@ class SiswaController
     private $tugasModel;
     private $pengumpulanModel;
     private $materiModel;
+    private $koneksi;
 
-   private $koneksi;
-
-public function __construct($koneksi)
-{
-    $this->koneksi = $koneksi;
-    $this->tugasModel = new TugasModel($koneksi);
-    $this->pengumpulanModel = new PengumpulanModel($koneksi);
-    $this->materiModel = new MateriModel($koneksi);
-}
+    public function __construct($koneksi)
+    {
+        $this->koneksi = $koneksi;
+        $this->tugasModel = new TugasModel($koneksi);
+        $this->pengumpulanModel = new PengumpulanModel($koneksi);
+        $this->materiModel = new MateriModel($koneksi);
+    }
 
     public function dashboard()
     {
@@ -42,124 +41,136 @@ public function __construct($koneksi)
         ];
     }
 
-public function tugasSaya()
-{
-    $siswa_id = $_SESSION['id'] ?? null;
+    public function tugasSaya()
+    {
+        $siswa_id = $_SESSION['id'] ?? null;
 
-    return [
-        'tugas'  => $this->tugasModel->getAllWithStatusSiswa($siswa_id),
-        'materi' => $this->materiModel->getAll()
-    ];
-}
-public function detailTugas()
-{
-    $id       = $_GET['id'] ?? 0;
-    $siswa_id = $_SESSION['id'] ?? null;
+        return [
+            'tugas'  => $this->tugasModel->getAllWithStatusSiswa($siswa_id),
+            'materi' => $this->materiModel->getAll()
+        ];
+    }
 
-    $tugas       = $this->tugasModel->getById($id);
-    $pengumpulan = $this->pengumpulanModel->getBySiswaAndTugas($id, $siswa_id);
+    public function detailTugas()
+    {
+        $id       = $_GET['id'] ?? 0;
+        $siswa_id = $_SESSION['id'] ?? null;
 
-    return [
-        'tugas'       => $tugas,
-        'pengumpulan' => $pengumpulan
-    ];
-}
-
-public function detailMateri()
-{
-    $id = $_GET['id'] ?? 0;
-
-    return [
-        'materi' => $this->materiModel->getById($id)
-    ];
-}
-
-public function nilai()
-{
-    $siswa_id = $_SESSION['id'] ?? null;
-
-    $filter_mapel  = $_GET['mapel_id'] ?? '';
-    $filter_status = $_GET['status'] ?? '';
-    $filter_awal   = $_GET['tanggal_awal'] ?? '';
-    $filter_akhir  = $_GET['tanggal_akhir'] ?? '';
-
-    $mapelList = [];
-    $query_mapel = mysqli_query($this->koneksi, "SELECT id, nama_mapel FROM mapel ORDER BY nama_mapel ASC");
-    if ($query_mapel) {
-        while ($m = mysqli_fetch_assoc($query_mapel)) {
-            $mapelList[] = $m;
+        // OOTOMATIS REKAM VIEW JIKA SISWA BUKA DETAIL TUGAS
+        if ($id && $siswa_id) {
+            $this->tugasModel->rekamView($id, $siswa_id);
         }
+
+        $tugas       = $this->tugasModel->getById($id);
+        $pengumpulan = $this->pengumpulanModel->getBySiswaAndTugas($id, $siswa_id);
+
+        return [
+            'tugas'       => $tugas,
+            'pengumpulan' => $pengumpulan
+        ];
     }
 
-    return [
-        'riwayat' => $this->pengumpulanModel->getRiwayatBySiswa(
-            $siswa_id, $filter_mapel, $filter_status, $filter_awal, $filter_akhir
-        ),
-        'mapelList'     => $mapelList,
-        'filter_mapel'  => $filter_mapel,
-        'filter_status' => $filter_status,
-        'filter_awal'   => $filter_awal,
-        'filter_akhir'  => $filter_akhir,
-    ];
-}
+    public function detailMateri()
+    {
+        $id       = $_GET['id'] ?? 0;
+        $siswa_id = $_SESSION['id'] ?? null;
 
-   public function uploadTugas()
-{
-    $siswa_id = $_SESSION['id'] ?? null;
+        // OTOMATIS REKAM VIEW JIKA SISWA BUKA DETAIL MATERI
+        if ($id && $siswa_id) {
+            $this->materiModel->rekamView($id, $siswa_id);
+        }
 
-if (isset($_POST['upload'])) {
-
-  $tugas_id = (int) ($_POST['tugas_id'] ?? $_GET['id'] ?? 0);
-    $catatan  = $_POST['catatan'] ?? '';
-
-    if ($tugas_id <= 0) {
-        header("Location: upload_tugas.php?error=pilih_tugas_dulu");
-        exit;
+        return [
+            'materi' => $this->materiModel->getById($id)
+        ];
     }
 
-        $file_jawaban = '';
+    public function nilai()
+    {
+        $siswa_id = $_SESSION['id'] ?? null;
 
-     if (!empty($_FILES['file']['name'])) {
-    $namaFile = $_FILES['file']['name'];
-    $tmpFile  = $_FILES['file']['tmp_name'];
+        $filter_mapel  = $_GET['mapel_id'] ?? '';
+        $filter_status = $_GET['status'] ?? '';
+        $filter_awal   = $_GET['tanggal_awal'] ?? '';
+        $filter_akhir  = $_GET['tanggal_akhir'] ?? '';
 
-    $ext = strtolower(pathinfo($namaFile, PATHINFO_EXTENSION));
+        $mapelList = [];
+        $query_mapel = mysqli_query($this->koneksi, "SELECT id, nama_mapel FROM mapel ORDER BY nama_mapel ASC");
+        if ($query_mapel) {
+            while ($m = mysqli_fetch_assoc($query_mapel)) {
+                $mapelList[] = $m;
+            }
+        }
 
-    if ($ext !== 'pdf') {
-        header("Location: detail_tugas.php?id={$tugas_id}&error=format_tidak_didukung");
-        exit;
+        return [
+            'riwayat' => $this->pengumpulanModel->getRiwayatBySiswa(
+                $siswa_id, $filter_mapel, $filter_status, $filter_awal, $filter_akhir
+            ),
+            'mapelList'     => $mapelList,
+            'filter_mapel'  => $filter_mapel,
+            'filter_status' => $filter_status,
+            'filter_awal'   => $filter_awal,
+            'filter_akhir'  => $filter_akhir,
+        ];
     }
 
-    $namaFile = uniqid('jawaban_') . '.' . $ext;
+    public function uploadTugas()
+    {
+        $siswa_id = $_SESSION['id'] ?? null;
 
-    $folderTujuan = __DIR__ . '/../../uploads/jawaban/';
+        if (isset($_POST['upload'])) {
 
-    if (!is_dir($folderTujuan)) {
-        mkdir($folderTujuan, 0777, true);
+            $tugas_id = (int) ($_POST['tugas_id'] ?? $_GET['id'] ?? 0);
+            $catatan  = $_POST['catatan'] ?? '';
+
+            if ($tugas_id <= 0) {
+                header("Location: upload_tugas.php?error=pilih_tugas_dulu");
+                exit;
+            }
+
+            $file_jawaban = '';
+
+            if (!empty($_FILES['file']['name'])) {
+                $namaFile = $_FILES['file']['name'];
+                $tmpFile  = $_FILES['file']['tmp_name'];
+
+                $ext = strtolower(pathinfo($namaFile, PATHINFO_EXTENSION));
+
+                if ($ext !== 'pdf') {
+                    header("Location: detail_tugas.php?id={$tugas_id}&error=format_tidak_didukung");
+                    exit;
+                }
+
+                $namaFile = uniqid('jawaban_') . '.' . $ext;
+
+                $folderTujuan = __DIR__ . '/../../uploads/jawaban/';
+
+                if (!is_dir($folderTujuan)) {
+                    mkdir($folderTujuan, 0777, true);
+                }
+
+                $berhasil = move_uploaded_file($tmpFile, $folderTujuan . $namaFile);
+
+                if ($berhasil) {
+                    $file_jawaban = $namaFile;
+                } else {
+                    die('Upload file gagal. Cek folder uploads/jawaban ada dan bisa ditulis.');
+                }
+            }
+
+            $this->pengumpulanModel->simpan(
+                $tugas_id,
+                $siswa_id,
+                $catatan,
+                $file_jawaban
+            );
+
+            header("Location: tugas_saya.php?berhasil=1");
+            exit;
+        }
+
+        return [
+            'tugasList' => $this->tugasModel->getAll()
+        ];
     }
-
-    $berhasil = move_uploaded_file($tmpFile, $folderTujuan . $namaFile);
-
-    if ($berhasil) {
-        $file_jawaban = $namaFile;
-    } else {
-        die('Upload file gagal. Cek folder uploads/jawaban ada dan bisa ditulis.');
-    }
-}
-
-        $this->pengumpulanModel->simpan(
-            $tugas_id,
-            $siswa_id,
-            $catatan,
-            $file_jawaban
-        );
-
-        header("Location: tugas_saya.php?berhasil=1");
-        exit;
-    }
-
-    return [
-        'tugasList' => $this->tugasModel->getAll()
-    ];
-}
 }

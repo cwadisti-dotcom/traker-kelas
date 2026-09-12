@@ -185,6 +185,28 @@ class GuruController
         ];
     }
 
+    public function viewers($materi_id)
+    {
+        $materi = $this->materiModel->getById($materi_id);
+        $viewers = $this->materiModel->getViewers($materi_id);
+
+        return [
+            'materi'  => $materi,
+            'viewers' => $viewers
+        ];
+    }
+
+    public function viewersTugas($tugas_id)
+    {
+        $tugas   = $this->tugasModel->getById($tugas_id);
+        $viewers = $this->tugasModel->getViewers($tugas_id);
+
+        return [
+            'tugas'   => $tugas,
+            'viewers' => $viewers
+        ];
+    }
+
     private function uploadMateri($file)
     {
         if(empty($file['name']))
@@ -305,7 +327,6 @@ class GuruController
         return $namaBaru;
     }
 
-
     public function simpanNilai()
     {
         if(isset($_POST['simpan_nilai']))
@@ -319,24 +340,25 @@ class GuruController
             exit;
         }
     }
+
     public function laporan()
-{
-    $mapel_id      = $_GET['mapel_id'] ?? null;
-    $status        = $_GET['status'] ?? null;
-    $tanggal_awal  = $_GET['tanggal_awal'] ?? null;
-    $tanggal_akhir = $_GET['tanggal_akhir'] ?? null;
+    {
+        $mapel_id      = $_GET['mapel_id'] ?? null;
+        $status        = $_GET['status'] ?? null;
+        $tanggal_awal  = $_GET['tanggal_awal'] ?? null;
+        $tanggal_akhir = $_GET['tanggal_akhir'] ?? null;
 
-    $rekap = $this->laporanModel->getRekapNilai(
-        $mapel_id, $status, $tanggal_awal, $tanggal_akhir
-    );
+        $rekap = $this->laporanModel->getRekapNilai(
+            $mapel_id, $status, $tanggal_awal, $tanggal_akhir
+        );
 
-    return [
-        'rekap'         => $rekap,
-        'mapelList'     => $this->mapelModel->getAll(),
-        'filter_mapel'  => $mapel_id,
-        'filter_status' => $status,
-        'filter_awal'   => $tanggal_awal,
-        'filter_akhir'  => $tanggal_akhir
-    ];
-}   
+        return [
+            'rekap'         => $rekap,
+            'mapelList'     => $this->mapelModel->getAll(),
+            'filter_mapel'  => $mapel_id,
+            'filter_status' => $status,
+            'filter_awal'   => $tanggal_awal,
+            'filter_akhir'  => $tanggal_akhir
+        ];
+    } 
 }

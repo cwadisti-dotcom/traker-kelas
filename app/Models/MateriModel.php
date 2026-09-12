@@ -99,4 +99,31 @@ class MateriModel
             "DELETE FROM materi WHERE id='$id'"
         );
     }
+
+    public function rekamView($materi_id, $siswa_id)
+    {
+        $materi_id = (int) $materi_id;
+        $siswa_id  = (int) $siswa_id;
+
+        if ($materi_id > 0 && $siswa_id > 0) {
+            $stmt = $this->koneksi->prepare("INSERT IGNORE INTO materi_views (materi_id, user_id) VALUES (?, ?)");
+            $stmt->bind_param("ii", $materi_id, $siswa_id);
+            return $stmt->execute();
+        }
+
+        return false;
+    }
+
+    public function getViewers($materi_id)
+    {
+        $materi_id = (int) $materi_id;
+
+        $query = "SELECT users.username, materi_views.dibuka_pada 
+                  FROM materi_views 
+                  JOIN users ON materi_views.user_id = users.id 
+                  WHERE materi_views.materi_id = '$materi_id' 
+                  ORDER BY materi_views.dibuka_pada DESC";
+
+        return mysqli_query($this->koneksi, $query);
+    }
 }
